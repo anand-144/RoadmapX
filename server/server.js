@@ -6,6 +6,7 @@ import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoute.js'
 import categoryRoutes from "./routes/categoryRoutes.js";
+import roadmapRoutes from "./routes/roadmapRoutes.js";
 
 
 
@@ -21,6 +22,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/roadmaps", roadmapRoutes);
 
 app.get("/", (req,res) => {
     res.send("Roadmap maker api running");
