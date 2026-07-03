@@ -8,7 +8,7 @@ import authRoutes from './routes/authRoute.js'
 import categoryRoutes from "./routes/categoryRoutes.js";
 import roadmapRoutes from "./routes/roadmapRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-
+import bookmarkRoutes from "./routes/bookmarkRoutes.js";
 
 
 dotenv.config();
@@ -25,6 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
 
 app.get("/", (req,res) => {
     res.send("Roadmap maker api running");
