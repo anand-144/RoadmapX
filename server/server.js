@@ -9,6 +9,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import roadmapRoutes from "./routes/roadmapRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import bookmarkRoutes from "./routes/bookmarkRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
 
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/roadmaps", roadmapRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/bookmarks", bookmarkRoutes);
+app.use("/api/progress", progressRoutes);
 
 app.get("/", (req,res) => {
     res.send("Roadmap maker api running");
