@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   Eye,
   EyeOff,
@@ -8,9 +7,12 @@ import {
   ArrowRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { login as loginAPI } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     emailOrUsername: "",
@@ -36,28 +38,26 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     if (
       !formData.emailOrUsername.trim() ||
       !formData.password.trim()
+      
     ) {
       setError("Please fill in all fields.");
       return;
     }
+    
 
     try {
       setLoading(true);
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        formData
-      );
+      const data = await loginAPI(formData);
 
-      localStorage.setItem("token", data.token);
+      console.log("Login Response:", data);
+      console.log("Context Login Called");
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(data.user)
-      );
+      login(data.user, data.token);
 
       toast.success(`Welcome back, ${data.user.name}! 🎉`);
 
@@ -69,7 +69,7 @@ const Login = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Something went wrong."
+        "Something went wrong."
       );
     } finally {
       setLoading(false);
@@ -148,7 +148,7 @@ const Login = () => {
               onSubmit={handleSubmit}
               className="space-y-6"
             >
-                        {/* Email / Username */}
+              {/* Email / Username */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-gray-300">
                   Email or Username
