@@ -14,6 +14,8 @@ import {
   Shield,
 } from "lucide-react";
 
+import toast from "react-hot-toast";
+
 const Navbar = () => {
 const [menuOpen, setMenuOpen] = useState(false);
 const [searchOpen, setSearchOpen] = useState(false);
@@ -29,7 +31,12 @@ const menuRef = useRef(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setProfileOpen(false);
-    window.location.href = "/";
+    
+    toast.success("Logged out successfully ")
+
+    setTimeout(() => {      
+      window.location.href = "/";
+    },1000);
   };
 
   const navLinkClass = ({ isActive }) =>
@@ -47,7 +54,6 @@ const menuRef = useRef(null);
       setProfileOpen(false);
     }
 
-    // Close mobile menu
     if (
       menuOpen &&
       menuRef.current &&

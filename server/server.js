@@ -18,12 +18,20 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
+console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY);
+console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
+
 connectDB();
 
 const app = express();
 
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);

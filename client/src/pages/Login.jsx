@@ -7,6 +7,7 @@ import {
   LoaderCircle,
   ArrowRight,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -57,6 +58,8 @@ const Login = () => {
         "user",
         JSON.stringify(data.user)
       );
+
+      toast.success(`Welcome back, ${data.user.name}! 🎉`);
 
       if (data.user.role === "admin") {
         navigate("/admin");
