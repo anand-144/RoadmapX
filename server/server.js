@@ -18,9 +18,6 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
-console.log("RESEND_API_KEY:", process.env.RESEND_API_KEY);
-console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
-
 connectDB();
 
 const app = express();
