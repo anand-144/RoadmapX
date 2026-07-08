@@ -91,6 +91,52 @@ const menuRef = useRef(null);
             <NavLink to="/dashboard" className={navLinkClass}>Dashboard</NavLink>
           </nav>
 
+          {/* Desktop Search */}
+<div className="hidden items-center lg:flex">
+
+  {!searchOpen ? (
+    <button
+      onClick={() => setSearchOpen(true)}
+      className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-400 transition-all duration-300 hover:border-white hover:text-white"
+    >
+      <Search size={19} />
+    </button>
+  ) : (
+    <div className="flex items-center gap-2">
+
+      <div className="relative animate-in fade-in slide-in-from-right-2 duration-300">
+
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+        />
+
+        <input
+          autoFocus
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search roadmaps..."
+          className="w-72 rounded-xl border border-white/10 bg-white/5 py-3 pl-11 pr-4 text-white placeholder:text-gray-500 outline-none transition-all duration-300 focus:border-white"
+        />
+
+      </div>
+
+      <button
+        onClick={() => {
+          setSearchOpen(false);
+          setSearch("");
+        }}
+        className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-400 transition-all duration-300 hover:border-red-500 hover:text-red-400"
+      >
+        <X size={19} />
+      </button>
+
+    </div>
+  )}
+
+</div>
+
           <div className="flex items-center gap-3">
             {/* Mobile Profile */}
 <div ref={profileRef} className="relative md:hidden">
