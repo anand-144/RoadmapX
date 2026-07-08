@@ -28,7 +28,7 @@ const App = () => {
 
   // Routes where Navbar & Footer should NOT appear
  const hideLayout =
-  location.pathname === "/dashboard" ||
+  // location.pathname === "/dashboard" ||
   location.pathname === "/login" ||
   location.pathname === "/register" ||
   location.pathname === "/forgot-password" ||
