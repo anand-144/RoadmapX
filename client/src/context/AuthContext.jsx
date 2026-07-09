@@ -32,9 +32,6 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
   };
-
-  console.log(user)
-
   return (
     <AuthContext.Provider
       value={{
