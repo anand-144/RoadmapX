@@ -31,7 +31,7 @@ const progressSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         default: null,
     },
-}, {timestamp: true}); 
+}, {timestamps: true}); 
 
 progressSchema.index({user: 1, roadmap: 1},{unique: true});
 

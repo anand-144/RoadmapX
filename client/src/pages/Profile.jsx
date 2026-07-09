@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext"; 
 import axios from "axios";
 import {
   User,
@@ -15,6 +17,12 @@ import {
 const Profile = () => {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const { user } = useAuth();
+  const { username } = useParams();
+
+  const isOwnProfile =
+    !username || username === user?.username;
+
   const [profile, setProfile] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -22,6 +30,8 @@ const Profile = () => {
     username: "",
     bio: "",
   });
+
+  // ...
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -39,16 +49,30 @@ const Profile = () => {
     try {
       setLoading(true);
 
-      const token = localStorage.getItem("token");
+      let data;
 
-      const { data } = await axios.get(
-        `${API_URL}/user/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (username) {
+        // Someone else's profile
+        const response = await axios.get(
+          `${API_URL}/user/${username}`
+        );
+
+        data = response.data;
+      } else {
+        // Logged-in user
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get(
+          `${API_URL}/user/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        data = response.data;
+      }
 
       setProfile(data.user);
 
@@ -62,7 +86,7 @@ const Profile = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to load profile."
+        "Failed to load profile."
       );
     } finally {
       setLoading(false);
@@ -71,7 +95,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [username]);
 
   // ===============================
   // Handle Input
@@ -150,7 +174,7 @@ const Profile = () => {
 
       setError(
         err.response?.data?.message ||
-          "Unable to update profile."
+        "Unable to update profile."
       );
     } finally {
       setSaving(false);
@@ -174,7 +198,7 @@ const Profile = () => {
   // ===============================
 
   return (
-  
+
     <div className="min-w-screen bg-black px-4 pt-28 pb-10">
 
       <div className="overflow-hidden rounded-3xl border-4 border-gray-500 bg-white shadow-xl">
@@ -207,7 +231,7 @@ const Profile = () => {
 
             </div>
 
-            {!editMode ? (
+            {isOwnProfile && !editMode ? (
               <button
                 onClick={() => {
                   setEditMode(true);
@@ -232,7 +256,7 @@ const Profile = () => {
           </div>
 
         </div>
-              {/* Content */}
+        {/* Content */}
 
         <div className="grid gap-8 p-8 lg:grid-cols-3">
 
@@ -396,11 +420,10 @@ const Profile = () => {
                     value={formData.name}
                     onChange={handleChange}
                     disabled={!editMode}
-                    className={`w-full rounded-xl border px-4 py-3 outline-none transition ${
-                      editMode
+                    className={`w-full rounded-xl border px-4 py-3 outline-none transition ${editMode
                         ? "border-slate-300 focus:border-blue-500"
                         : "cursor-not-allowed border border-white/10 bg-white/5 text-white"
-                    }`}
+                      }`}
                   />
 
                 </div>
@@ -419,11 +442,10 @@ const Profile = () => {
                     value={formData.username}
                     onChange={handleChange}
                     disabled={!editMode}
-                    className={`w-full rounded-xl border px-4 py-3 outline-none transition ${
-                      editMode
+                    className={`w-full rounded-xl border px-4 py-3 outline-none transition ${editMode
                         ? "border-slate-300 focus:border-blue-500"
                         : "cursor-not-allowed bg-slate-100"
-                    }`}
+                      }`}
                   />
 
                 </div>
@@ -460,23 +482,22 @@ const Profile = () => {
                     onChange={handleChange}
                     disabled={!editMode}
                     placeholder="Tell everyone something about yourself..."
-                    className={`w-full resize-none rounded-xl border px-4 py-3 outline-none transition ${
-                      editMode
+                    className={`w-full resize-none rounded-xl border px-4 py-3 outline-none transition ${editMode
                         ? "border-slate-300 focus:border-blue-500"
                         : "cursor-not-allowed bg-slate-100"
-                    }`}
+                      }`}
                   />
 
                 </div>
-                              {/* Action Buttons */}
+                {/* Action Buttons */}
 
-                {editMode && (
+                {isOwnProfile && editMode && (
                   <div className="flex flex-col gap-4 pt-2 sm:flex-row">
 
                     <button
                       type="submit"
                       disabled={saving}
-                    className="flex items-center justify-center border border-slate-200 gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-black transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="flex items-center justify-center border border-slate-200 gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-black transition-all duration-300 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {saving ? (
                         <>

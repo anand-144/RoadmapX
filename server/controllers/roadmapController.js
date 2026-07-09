@@ -99,6 +99,31 @@ export const getRoadmaps = async (req, res) => {
 };
 
 // ==========================
+// Get My Roadmaps
+// ==========================
+export const getMyRoadmaps = async (req, res) => {
+  try {
+    const roadmaps = await Roadmap.find({
+      createdBy: req.user._id,
+    })
+      .populate("category", "name slug icon")
+      .populate("createdBy", "name username")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: roadmaps.length,
+      roadmaps,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ==========================
 // Get Roadmap By Slug
 // ==========================
 export const getRoadmapBySlug = async (req, res) => {

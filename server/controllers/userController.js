@@ -56,7 +56,7 @@ export const updateProfile = async (req,res) => {
         success: true,
         message: "Profile updated successfully.",
         user:{
-            id: user._id,
+            _id: user._id,
             name: user.name,
             username: user.username,
             email: user.email,
