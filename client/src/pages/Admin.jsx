@@ -7,27 +7,22 @@ import RoadmapManagement from "../components/dashboard/admin/RoadmapManagement";
 
 const Admin = () => {
   return (
-  <div className="mx-auto max-w-7xl space-y-8 pt-26">
+    <div className="mx-auto max-w-7xl px-4 pt-24 pb-8 sm:px-6 lg:px-8 lg:pt-28">
+      <div className="space-y-8">
+        {/* Top */}
+        <RecentUsers />
 
-      {/* Top */}
-      <RecentUsers />
+        {/* Middle */}
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-2 items-start">
+          <Analytics />
+          <RoadmapManagement />
+        </div>
 
-      {/* Middle */}
-      <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-
-        <Analytics />
-
-        <RoadmapManagement />
-
+        {/* Bottom */}
+        <div className="grid grid-cols-1 gap-8 items-start">
+          <CategoryManagement />
+        </div>
       </div>
-
-      {/* Bottom */}
-      <div className="grid grid-cols-1 gap-8 xl:grid-cols-2">
-
-        <CategoryManagement />
-
-      </div>
-
     </div>
   );
 };

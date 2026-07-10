@@ -86,7 +86,7 @@ const RoadmapManagement = () => {
             >
               <div className="flex flex-col gap-5 p-5 lg:flex-row lg:items-center lg:justify-between">
                 {/* Left */}
-                <div className="flex flex-1 gap-5">
+                <div className="flex flex-col gap-5 sm:flex-row sm:flex-1">
                   <img
                     src={
                       roadmap.icon

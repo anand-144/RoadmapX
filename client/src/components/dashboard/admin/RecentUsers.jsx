@@ -81,7 +81,7 @@ const RecentUsers = () => {
               key={user._id}
               className="group rounded-2xl border border-slate-800 bg-black/30 p-5 transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/40"
             >
-              <div className="flex items-center justify-between gap-4">
+             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 {/* Left */}
                 <div className="flex items-center gap-4">
                   {/* Avatar */}

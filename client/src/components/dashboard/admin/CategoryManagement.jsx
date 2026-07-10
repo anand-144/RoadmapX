@@ -26,6 +26,7 @@ const CategoryManagement = () => {
       );
 
       if (data.success) {
+        console.log(data.categories); 
         setCategories(data.categories);
       }
     } catch (error) {
@@ -62,7 +63,7 @@ const CategoryManagement = () => {
 
       {loading ? (
         <div className="space-y-4">
-          {[1,2,3,4,5].map((item)=>(
+          {[1, 2, 3, 4, 5].map((item) => (
             <div
               key={item}
               className="h-20 animate-pulse rounded-2xl bg-slate-900"
@@ -71,8 +72,8 @@ const CategoryManagement = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {categories.map((category)=>(
-                    <div
+          {categories.map((category) => (
+            <div
               key={category._id}
               className="group rounded-2xl border border-slate-800 bg-black/30 p-5 transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/40"
             >
@@ -82,9 +83,13 @@ const CategoryManagement = () => {
                   <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-800 bg-slate-900">
                     {category.icon ? (
                       <img
-                        src={category.icon}
+                        src={
+                          category.icon
+                            ? `https://cdn.simpleicons.org/${category.icon}`
+                            : "https://placehold.co/96x96/0f172a/ffffff?text=?"
+                        }
                         alt={category.name}
-                        className="h-8 w-8 object-contain"
+                        className="h-16 w-16 rounded-xl border border-slate-800 bg-slate-900 p-3 object-contain"
                       />
                     ) : (
                       <FolderTree
@@ -127,7 +132,7 @@ const CategoryManagement = () => {
                     {Math.round(
                       (category.roadmapCount /
                         (categories[0]?.roadmapCount || 1)) *
-                        100
+                      100
                     )}
                     %
                   </span>
@@ -137,11 +142,10 @@ const CategoryManagement = () => {
                   <div
                     className="h-full rounded-full bg-white transition-all duration-500"
                     style={{
-                      width: `${
-                        (category.roadmapCount /
+                      width: `${(category.roadmapCount /
                           (categories[0]?.roadmapCount || 1)) *
                         100
-                      }%`,
+                        }%`,
                     }}
                   />
                 </div>
