@@ -40,7 +40,7 @@ const CategoryManagement = () => {
   }, []);
 
   return (
-    <section className="rounded-3xl border border-slate-800 bg-slate-950 p-6">
+    <section className="rounded-3xl border border-slate-800 bg-slate-950 p-6 mb-4">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-white">

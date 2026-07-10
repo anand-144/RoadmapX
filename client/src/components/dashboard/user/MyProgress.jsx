@@ -130,7 +130,7 @@ const MyProgress = () => {
                 <div className="flex items-start gap-4">
                   <img
                     src={
-                      item.roadmap?.thumbnail ||
+                      item.roadmap?.icon ||
                       "https://placehold.co/120x120/0f172a/ffffff?text=Roadmap"
                     }
                     alt={item.roadmap?.title}

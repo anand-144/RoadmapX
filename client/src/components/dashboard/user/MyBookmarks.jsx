@@ -151,10 +151,10 @@ const removeBookmark = async (roadmapId) => {
               className="group overflow-hidden rounded-2xl border border-slate-800 bg-black/40 transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/60"
             >
               <div className="flex flex-col gap-5 p-5 lg:flex-row lg:items-center">
-                {/* Thumbnail */}
+                {/* icon */}
                 <img
                   src={
-                    bookmark.roadmap?.thumbnail ||
+                    bookmark.roadmap?.icon ||
                     "https://placehold.co/300x180/0f172a/ffffff?text=Roadmap"
                   }
                   alt={bookmark.roadmap?.title}

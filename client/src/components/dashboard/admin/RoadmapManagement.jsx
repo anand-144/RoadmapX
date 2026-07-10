@@ -29,6 +29,8 @@ const RoadmapManagement = () => {
         }
       );
 
+      console.log(data.roadmaps)
+
       if (data.success) {
         setRoadmaps(data.roadmaps);
       }
@@ -78,7 +80,7 @@ const RoadmapManagement = () => {
       ) : (
         <div className="space-y-4">
           {roadmaps.slice(0, 5).map((roadmap) => (
-                    <div
+            <div
               key={roadmap._id}
               className="group overflow-hidden rounded-2xl border border-slate-800 bg-black/30 transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/40"
             >
@@ -87,11 +89,12 @@ const RoadmapManagement = () => {
                 <div className="flex flex-1 gap-5">
                   <img
                     src={
-                      roadmap.thumbnail ||
-                      "https://placehold.co/160x100?text=Roadmap"
+                      roadmap.icon
+                        ? `https://cdn.simpleicons.org/${roadmap.icon}`
+                        : "https://placehold.co/96x96/0f172a/ffffff?text=?"
                     }
                     alt={roadmap.title}
-                    className="h-24 w-36 rounded-xl border border-slate-800 object-cover"
+                    className="h-20 w-20 rounded-xl object-contain bg-slate-900 p-3 border border-slate-800"
                   />
 
                   <div className="flex-1">
@@ -125,11 +128,10 @@ const RoadmapManagement = () => {
                       </span>
 
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          roadmap.status === "Published"
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${roadmap.status === "Published"
                             ? "bg-green-500/20 text-green-400"
                             : "bg-yellow-500/20 text-yellow-400"
-                        }`}
+                          }`}
                       >
                         {roadmap.status}
                       </span>

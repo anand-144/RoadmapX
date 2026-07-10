@@ -32,6 +32,8 @@ const MyRoadmaps = () => {
         }
       );
 
+      console.log(data.roadmaps);
+
       if (data.success) {
         setRoadmaps(data.roadmaps || []);
       }
@@ -46,6 +48,7 @@ const MyRoadmaps = () => {
   useEffect(() => {
     fetchMyRoadmaps();
   }, []);
+  
 
   return (
     <section className="rounded-3xl border border-slate-800 bg-slate-950 p-6 shadow-xl">
@@ -125,19 +128,20 @@ const MyRoadmaps = () => {
       ) : (
         <div className="space-y-5">
           {roadmaps.slice(0, 4).map((roadmap) => (
-                        <div
+            <div
               key={roadmap._id}
               className="group overflow-hidden rounded-2xl border border-slate-800 bg-black/40 transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/60"
             >
               <div className="flex flex-col gap-5 p-5 lg:flex-row lg:items-center">
-                {/* Thumbnail */}
+                {/* icon */}
                 <img
                   src={
-                    roadmap.thumbnail ||
-                    "https://placehold.co/300x180/0f172a/ffffff?text=Roadmap"
+                    roadmap.icon
+                      ? `https://cdn.simpleicons.org/${roadmap.icon}`
+                      : "https://placehold.co/96x96/0f172a/ffffff?text=?"
                   }
                   alt={roadmap.title}
-                  className="h-40 w-full rounded-2xl object-cover lg:h-28 lg:w-44"
+                  className="h-20 w-20 rounded-xl object-contain bg-slate-900 p-3 border border-slate-800"
                 />
 
                 {/* Content */}
@@ -150,11 +154,10 @@ const MyRoadmaps = () => {
                     )}
 
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${
-                        roadmap.status === "Published"
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${roadmap.status === "Published"
                           ? "bg-green-500/15 text-green-400"
                           : "bg-yellow-500/15 text-yellow-400"
-                      }`}
+                        }`}
                     >
                       {roadmap.status}
                     </span>

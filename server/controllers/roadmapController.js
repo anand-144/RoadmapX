@@ -9,7 +9,7 @@ export const createRoadmap = async (req, res) => {
     const {
       title,
       description,
-      thumbnail,
+      icon,
       category,
       difficulty,
       estimatedTime,
@@ -48,7 +48,7 @@ export const createRoadmap = async (req, res) => {
       title,
       description,
       slug,
-      thumbnail,
+      icon,
       category,
       difficulty,
       estimatedTime,
@@ -165,7 +165,7 @@ export const updateRoadmap = async (req, res) => {
     const {
       title,
       description,
-      thumbnail,
+      icon,
       category,
       difficulty,
       estimatedTime,
@@ -222,8 +222,8 @@ export const updateRoadmap = async (req, res) => {
     if (description !== undefined)
       roadmap.description = description;
 
-    if (thumbnail !== undefined)
-      roadmap.thumbnail = thumbnail;
+    if (icon !== undefined)
+      roadmap.icon = icon;
 
     if (difficulty)
       roadmap.difficulty = difficulty;

@@ -26,7 +26,7 @@ const resourceSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 // Topic Schema
@@ -51,7 +51,7 @@ const topicSchema = new mongoose.Schema(
       default: [],
     },
   },
-  { _id: true }
+  { _id: true },
 );
 
 // Roadmap Schema
@@ -77,7 +77,7 @@ const roadmapSchema = new mongoose.Schema(
       trim: true,
     },
 
-    thumbnail: {
+    icon: {
       type: String,
       default: "",
     },
@@ -152,7 +152,7 @@ const roadmapSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default mongoose.model("Roadmap", roadmapSchema);
