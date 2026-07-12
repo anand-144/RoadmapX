@@ -84,6 +84,7 @@ export const getRoadmaps = async (req, res) => {
       search = "",
       category,
       difficulty,
+      featured,
       sort = "latest",
       page = 1,
       limit = 12,
@@ -92,6 +93,13 @@ export const getRoadmaps = async (req, res) => {
     const query = {
       status: "Published",
     };
+
+    // Featured Filter
+    if (featured === "true") {
+      query.isFeatured = true;
+    } else if (featured === "false") {
+      query.isFeatured = false;
+    }
 
     // Search
     if (search.trim()) {
@@ -110,9 +118,7 @@ export const getRoadmaps = async (req, res) => {
         },
         {
           tags: {
-            $in: [
-              new RegExp(search, "i"),
-            ],
+            $in: [new RegExp(search, "i")],
           },
         },
       ];
@@ -165,7 +171,6 @@ export const getRoadmaps = async (req, res) => {
       currentPage: Number(page),
       totalPages: Math.ceil(total / limit),
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -224,6 +229,42 @@ export const getRoadmapBySlug = async (req, res) => {
     res.status(200).json({
       success: true,
       roadmap,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getFeaturedRoadmaps = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 6;
+
+    const skip = (page - 1) * limit;
+
+    const query = {
+      status: "Published",
+      isFeatured: true,
+    };
+
+    const roadmaps = await Roadmap.find(query)
+      .populate("category", "name slug icon")
+      .populate("createdBy", "name username")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Roadmap.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      roadmaps,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
     });
   } catch (error) {
     res.status(500).json({
@@ -295,34 +336,24 @@ export const updateRoadmap = async (req, res) => {
       });
     }
 
-    if (description !== undefined)
-      roadmap.description = description;
+    if (description !== undefined) roadmap.description = description;
 
-    if (icon !== undefined)
-      roadmap.icon = icon;
+    if (icon !== undefined) roadmap.icon = icon;
 
-    if (difficulty)
-      roadmap.difficulty = difficulty;
+    if (difficulty) roadmap.difficulty = difficulty;
 
-    if (estimatedTime !== undefined)
-      roadmap.estimatedTime = estimatedTime;
+    if (estimatedTime !== undefined) roadmap.estimatedTime = estimatedTime;
 
-    if (tags)
-      roadmap.tags = tags;
+    if (tags) roadmap.tags = tags;
 
-    if (topics)
-      roadmap.topics = topics;
+    if (topics) roadmap.topics = topics;
 
-    if (typeof isFeatured === "boolean")
-      roadmap.isFeatured = isFeatured;
+    if (typeof isFeatured === "boolean") roadmap.isFeatured = isFeatured;
 
     if (status) {
       roadmap.status = status;
 
-      if (
-        status === "Published" &&
-        !roadmap.publishedAt
-      ) {
+      if (status === "Published" && !roadmap.publishedAt) {
         roadmap.publishedAt = new Date();
       }
     }
@@ -338,7 +369,6 @@ export const updateRoadmap = async (req, res) => {
       message: "Roadmap updated successfully.",
       roadmap: updatedRoadmap,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -378,7 +408,6 @@ export const deleteRoadmap = async (req, res) => {
       success: true,
       message: "Roadmap deleted successfully.",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,

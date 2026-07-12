@@ -11,9 +11,7 @@ const CategoryFilter = ({
     setSelectedCategory(id);
     setPage(1);
   };
-
-  console.log(categories)
-
+  
   return (
     <section className="mb-10">
       <div className="mb-4 flex items-center justify-between">

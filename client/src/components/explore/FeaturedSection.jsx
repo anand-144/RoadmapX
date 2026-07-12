@@ -9,8 +9,17 @@ import {
   User,
 } from "lucide-react";
 
-const FeaturedSection = ({ featuredRoadmaps = [] }) => {
+import Pagination from "./Pagination";
+
+const FeaturedSection = ({
+  featuredRoadmaps = [],
+  featuredPage,
+  featuredTotalPages,
+  setFeaturedPage,
+}) => {
   if (!featuredRoadmaps.length) return null;
+
+  console.log("Featured" ,featuredRoadmaps)
 
   return (
     <section className="mb-14">
@@ -53,7 +62,7 @@ const FeaturedSection = ({ featuredRoadmaps = [] }) => {
             }}
             viewport={{ once: true }}
             transition={{
-              delay: index * 0.1,
+              delay: index * 0.08,
             }}
             whileHover={{
               y: -8,
@@ -130,6 +139,15 @@ const FeaturedSection = ({ featuredRoadmaps = [] }) => {
           </motion.div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {featuredTotalPages > 1 && (
+        <Pagination
+          page={featuredPage}
+          totalPages={featuredTotalPages}
+          setPage={setFeaturedPage}
+        />
+      )}
     </section>
   );
 };

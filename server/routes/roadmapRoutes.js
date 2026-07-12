@@ -3,6 +3,7 @@ import {
   createRoadmap,
   getRoadmaps,
   getRoadmapBySlug,
+  getFeaturedRoadmaps,
   getMyRoadmaps,
   updateRoadmap,
   deleteRoadmap,
@@ -18,6 +19,7 @@ const router = express.Router();
 
 // Get all roadmaps
 router.get("/", getRoadmaps);
+router.get("/featured", getFeaturedRoadmaps);
 
 
 // ==========================
@@ -35,6 +37,7 @@ router.put("/:id", protect, updateRoadmap);
 
 // Delete roadmap
 router.delete("/:id", protect, deleteRoadmap);
+
 
 // Get single roadmap by slug
 router.get("/:slug", getRoadmapBySlug);

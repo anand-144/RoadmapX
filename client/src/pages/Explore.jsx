@@ -26,12 +26,20 @@ const Explore = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState("");
   const [sortBy, setSortBy] = useState("latest");
 
+  // Main Roadmaps Pagination
   const [page, setPage] = useState(1);
-
   const [totalPages, setTotalPages] = useState(1);
   const [totalRoadmaps, setTotalRoadmaps] = useState(0);
 
-  const limit = 12;
+  // Featured Pagination
+  const [featuredPage, setFeaturedPage] = useState(1);
+  const [featuredTotalPages, setFeaturedTotalPages] = useState(1);
+
+  const limit = 6;
+
+  // ==========================
+  // Categories
+  // ==========================
 
   const fetchCategories = async () => {
     try {
@@ -45,6 +53,10 @@ const Explore = () => {
     }
   };
 
+  // ==========================
+  // Main Roadmaps
+  // ==========================
+
   const fetchRoadmaps = async () => {
     try {
       setLoading(true);
@@ -56,21 +68,21 @@ const Explore = () => {
             search,
             category: selectedCategory,
             difficulty: selectedDifficulty,
+            featured: false,
             sort: sortBy,
             page,
             limit,
           },
         }
       );
+      console.log(
+        res.data.roadmaps.map((r) => ({
+          title: r.title,
+          featured: r.isFeatured,
+        }))
+      );
 
       setRoadmaps(res.data.roadmaps);
-
-      const featured = res.data.roadmaps.filter((r) => r.isFeatured);
-      const normal = res.data.roadmaps.filter((r) => !r.isFeatured);
-
-      setFeaturedRoadmaps(featured);
-      setRoadmaps(normal);
-
       setTotalRoadmaps(res.data.total);
       setTotalPages(res.data.totalPages);
     } catch (error) {
@@ -79,6 +91,33 @@ const Explore = () => {
       setLoading(false);
     }
   };
+
+  // ==========================
+  // Featured Roadmaps
+  // ==========================
+
+  const fetchFeaturedRoadmaps = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/roadmaps/featured`,
+        {
+          params: {
+            page: featuredPage,
+            limit: 6,
+          },
+        }
+      );
+
+      setFeaturedRoadmaps(res.data.roadmaps);
+      setFeaturedTotalPages(res.data.totalPages);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ==========================
+  // Effects
+  // ==========================
 
   useEffect(() => {
     fetchCategories();
@@ -93,6 +132,10 @@ const Explore = () => {
     sortBy,
     page,
   ]);
+
+  useEffect(() => {
+    fetchFeaturedRoadmaps();
+  }, [featuredPage]);
 
   return (
     <div className="min-h-screen bg-black pt-28 text-white">
@@ -120,6 +163,9 @@ const Explore = () => {
 
         <FeaturedSection
           featuredRoadmaps={featuredRoadmaps}
+          featuredPage={featuredPage}
+          featuredTotalPages={featuredTotalPages}
+          setFeaturedPage={setFeaturedPage}
         />
 
         {loading ? (
@@ -128,9 +174,24 @@ const Explore = () => {
           <EmptyState />
         ) : (
           <>
-            <RoadmapGrid
-              roadmaps={roadmaps}
-            />
+
+            <div className="mb-8 mt-16 flex items-end justify-between">
+              <div>
+                <h2 className="text-3xl font-bold text-white">
+                  Explore Roadmaps
+                </h2>
+
+                <p className="mt-2 text-gray-400">
+                  Browse all learning paths curated by the community.
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-gray-300">
+                {totalRoadmaps} Roadmaps
+              </div>
+            </div>
+
+            <RoadmapGrid roadmaps={roadmaps} />
 
             <Pagination
               page={page}
