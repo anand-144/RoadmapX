@@ -80,16 +80,92 @@ export const createRoadmap = async (req, res) => {
 // Get all roadmap
 export const getRoadmaps = async (req, res) => {
   try {
-    const roadmap = await Roadmap.find()
+    const {
+      search = "",
+      category,
+      difficulty,
+      sort = "latest",
+      page = 1,
+      limit = 12,
+    } = req.query;
+
+    const query = {
+      status: "Published",
+    };
+
+    // Search
+    if (search.trim()) {
+      query.$or = [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          description: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          tags: {
+            $in: [
+              new RegExp(search, "i"),
+            ],
+          },
+        },
+      ];
+    }
+
+    // Category filter
+    if (category) {
+      query.category = category;
+    }
+
+    // Difficulty filter
+    if (difficulty) {
+      query.difficulty = difficulty;
+    }
+
+    let sortOption = {};
+
+    switch (sort) {
+      case "popular":
+        sortOption = { views: -1 };
+        break;
+
+      case "likes":
+        sortOption = { likes: -1 };
+        break;
+
+      case "featured":
+        sortOption = { isFeatured: -1 };
+        break;
+
+      default:
+        sortOption = { createdAt: -1 };
+    }
+
+    const skip = (page - 1) * limit;
+
+    const roadmaps = await Roadmap.find(query)
       .populate("category", "name slug icon")
       .populate("createdBy", "name username")
-      .sort({ createdAt: -1 });
+      .sort(sortOption)
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Roadmap.countDocuments(query);
 
     res.status(200).json({
       success: true,
-      count: roadmap.length,
-      roadmap,
+      roadmaps,
+      total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,

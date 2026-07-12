@@ -12,15 +12,15 @@ const Admin = () => {
         {/* Top */}
         <RecentUsers />
 
+
         {/* Middle */}
+        <div className="grid grid-cols-1 gap-8 items-start">
+          <CategoryManagement />
+        </div>
+        {/* Bottom */}
         <div className="grid grid-cols-1 gap-8 xl:grid-cols-2 items-start">
           <Analytics />
           <RoadmapManagement />
-        </div>
-
-        {/* Bottom */}
-        <div className="grid grid-cols-1 gap-8 items-start">
-          <CategoryManagement />
         </div>
       </div>
     </div>
