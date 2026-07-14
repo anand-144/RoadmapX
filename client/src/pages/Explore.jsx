@@ -75,13 +75,6 @@ const Explore = () => {
           },
         }
       );
-      console.log(
-        res.data.roadmaps.map((r) => ({
-          title: r.title,
-          featured: r.isFeatured,
-        }))
-      );
-
       setRoadmaps(res.data.roadmaps);
       setTotalRoadmaps(res.data.total);
       setTotalPages(res.data.totalPages);

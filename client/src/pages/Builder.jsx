@@ -1,5 +1,7 @@
-import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react"
+import axios from "axios";
+import toast from "react-hot-toast";
 
 import BuilderHeader from "../components/builder/BuilderHeader";
 import BuilderSidebar from "../components/builder/BuilderSidebar";
@@ -12,6 +14,7 @@ import TagsInput from "../components/builder/TagsInput";
 const Builder = () => {
 
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -25,13 +28,114 @@ const Builder = () => {
     status: "Draft",
   });
 
+  const createRoadmap = async (status) => {
+    try {
+      setLoading(true);
+
+      if (!formData.title.trim()) {
+        return toast.error("Title is required.");
+      }
+
+      if (!formData.description.trim()) {
+        return toast.error("Description is required.");
+      }
+
+      if (!formData.category) {
+        return toast.error("Please select a category.");
+      }
+
+      // ==========================
+      // Publish Validation
+      // ==========================
+
+      if (
+        status === "Published" &&
+        formData.topics.length === 0
+      ) {
+        return toast.error(
+          "Add at least one topic before publishing."
+        );
+      }
+
+      // Validate every topic
+      for (const topic of formData.topics) {
+        if (!topic.title.trim()) {
+          return toast.error("Every topic needs a title.");
+        }
+      }
+
+      // ==========================
+      // API Call
+      // ==========================
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/roadmaps`,
+        {
+          ...formData,
+          status,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(res.data);
+
+      toast(res.data.message);
+
+      // Reset form
+      setFormData({
+        title: "",
+        description: "",
+        category: "",
+        difficulty: "Beginner",
+        estimatedTime: "",
+        icon: "",
+        tags: [],
+        topics: [],
+        status: "Draft",
+      });
+
+
+    } catch (error) {
+      console.log(error);
+
+      toast.error(
+        error.response?.data?.message ||
+        "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveDraft = () => {
-    console.log("Saving Draft...");
+    createRoadmap("Draft");
   };
 
   const handlePublish = () => {
-    console.log("Publishing Roadmap...");
+    createRoadmap("Published");
   };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/categories`
+      );
+      setCategories(res.data.categories)
+      console.log(res.data.categories)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black pt-28 text-white">
@@ -61,6 +165,7 @@ const Builder = () => {
             <BasicInfoForm
               formData={formData}
               setFormData={setFormData}
+              categories={categories}
             />
 
             {/* Upcoming Components */}

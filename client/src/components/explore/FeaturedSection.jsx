@@ -19,8 +19,6 @@ const FeaturedSection = ({
 }) => {
   if (!featuredRoadmaps.length) return null;
 
-  console.log("Featured" ,featuredRoadmaps)
-
   return (
     <section className="mb-14">
       {/* Heading */}

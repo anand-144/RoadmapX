@@ -18,6 +18,7 @@ const difficulties = [
 const BasicInfoForm = ({
   formData,
   setFormData,
+  categories,
 }) => {
   const handleChange = (e) => {
     setFormData({
@@ -127,14 +128,28 @@ const BasicInfoForm = ({
             </label>
 
             <select
-              name="category"
               value={formData.category}
-              onChange={handleChange}
-              className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 outline-none transition focus:border-yellow-400"
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  category: e.target.value,
+                }))
+              }
+              disabled={categories.length === 0}
+              className="w-full rounded-2xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
             >
               <option value="">
                 Select Category
               </option>
+
+              {categories.map((category) => (
+                <option
+                  key={category._id}
+                  value={category._id}
+                >
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
 
