@@ -6,10 +6,12 @@ import {
   getFeaturedRoadmaps,
   getMyRoadmaps,
   updateRoadmap,
+  toggleFeaturedRoadmap,
   deleteRoadmap,
 } from "../controllers/roadmapController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
+import { adminOnly } from "../middleware/adminMiddleware.js";
 
 const router = express.Router();
 
@@ -34,6 +36,13 @@ router.post("/", protect, createRoadmap);
 
 // Update roadmap
 router.put("/:id", protect, updateRoadmap);
+
+router.patch(
+  "/:id/feature",
+  protect,
+  adminOnly,
+  toggleFeaturedRoadmap
+);
 
 // Delete roadmap
 router.delete("/:id", protect, deleteRoadmap);

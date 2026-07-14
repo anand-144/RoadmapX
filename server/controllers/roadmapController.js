@@ -55,7 +55,7 @@ export const createRoadmap = async (req, res) => {
       tags,
       topics,
       status,
-      isFeatured,
+      isFeatured: req.user.role === "admin" ? isFeatured : false,
       createdBy: req.user._id,
       publishedAt: status === "Published" ? new Date() : null,
     });
@@ -348,7 +348,9 @@ export const updateRoadmap = async (req, res) => {
 
     if (topics) roadmap.topics = topics;
 
-    if (typeof isFeatured === "boolean") roadmap.isFeatured = isFeatured;
+    if (req.user.role === "admin" && typeof isFeatured === "boolean") {
+      roadmap.isFeatured = isFeatured;
+    }
 
     if (status) {
       roadmap.status = status;
@@ -369,6 +371,44 @@ export const updateRoadmap = async (req, res) => {
       message: "Roadmap updated successfully.",
       roadmap: updatedRoadmap,
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// ==========================
+// Feature / Unfeature Roadmap (Admin Only)
+// ==========================
+
+export const toggleFeaturedRoadmap = async (req, res) => {
+  try {
+    const { isFeatured } = req.body;
+
+    const roadmap = await Roadmap.findById(req.params.id);
+
+    if (!roadmap) {
+      return res.status(404).json({
+        success: false,
+        message: "Roadmap not found.",
+      });
+    }
+
+    roadmap.isFeatured = Boolean(isFeatured);
+
+    await roadmap.save();
+
+    res.status(200).json({
+      success: true,
+      message: roadmap.isFeatured
+        ? "Roadmap marked as featured."
+        : "Roadmap removed from featured.",
+      roadmap,
+    });
+
   } catch (error) {
     res.status(500).json({
       success: false,
