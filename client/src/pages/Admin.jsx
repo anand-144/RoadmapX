@@ -1,30 +1,57 @@
-import React from "react";
+import { useState } from "react";
 
-import CategoryManagement from "../components/dashboard/admin/CategoryManagement";
-import RoadmapManagement from "../components/dashboard/admin/RoadmapManagement";
+import AdminHeader from "../components/admin/AdminHeader";
+import AdminSidebar from "../components/admin/AdminSidebar";
+
+import Overview from "../components/admin/overview/Overview"
+
+import CategoryManagement from "../components/admin/categories/CategoryManagement";
+import RoadmapManagement from "../components/admin/roadmaps/RoadmapManagement";
+import Analytics from "../components/admin/analytics/Analytics";
 
 const Admin = () => {
+  const [activeTab, setActiveTab] = useState("overview");
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "overview":
+        return <Overview />;
+
+      case "categories":
+        return <CategoryManagement />;
+
+      case "roadmaps":
+        return <RoadmapManagement />;
+
+      case "analytics":
+        return <Analytics />;
+
+      default:
+        return <Overview   />;
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-8 pt-24 sm:px-6 lg:px-8 lg:pt-28">
+    <div className="min-h-screen bg-black pt-24 text-white">
 
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-white">
-          Admin Panel
-        </h1>
+      <div className="mx-auto max-w-[1800px] px-6">
 
-        <p className="mt-2 text-gray-400">
-          Manage categories and moderate roadmaps across the platform.
-        </p>
-      </div>
+        <AdminHeader />
 
-      <div className="space-y-8">
+        <div className="mt-8 grid gap-8 xl:grid-cols-12">
 
-        {/* Categories */}
-        <CategoryManagement />
+          <div className="xl:col-span-3">
+            <AdminSidebar
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          </div>
 
-        {/* Roadmaps */}
-        <RoadmapManagement />
+          <div className="xl:col-span-9">
+            {renderContent()}
+          </div>
+
+        </div>
 
       </div>
 

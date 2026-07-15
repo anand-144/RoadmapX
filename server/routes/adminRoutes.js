@@ -66,8 +66,6 @@ router.delete("/roadmaps/:id", deleteRoadmapByAdmin);
 
 router.put("/roadmaps/:id/publish", togglePublishRoadmap);
 
-router.put("/roadmaps/:id/feature", toggleFeatureRoadmap);
-
 /*
 ==========================================
 Categories

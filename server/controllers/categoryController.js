@@ -1,4 +1,5 @@
 import Category from "../models/Category.js";
+import Roadmap from "../models/Roadmap.js";
 import slugify from "slugify";
 
 // Create Category
@@ -141,6 +142,7 @@ export const updateCategory = async (req, res) => {
 };
 
 // Delete Category
+
 export const deleteCategory = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
@@ -152,13 +154,26 @@ export const deleteCategory = async (req, res) => {
       });
     }
 
+    // Check if category is used by any roadmap
+    const roadmapCount = await Roadmap.countDocuments({
+      category: category._id,
+    });
+
+    if (roadmapCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot delete category. It is currently used by ${roadmapCount} roadmap${
+          roadmapCount > 1 ? "s" : ""
+        }.`,
+      });
+    }
+
     await category.deleteOne();
 
     res.status(200).json({
       success: true,
       message: "Category deleted successfully.",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
