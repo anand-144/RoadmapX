@@ -54,6 +54,7 @@ const App = () => {
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/builder" element={<Builder />} />
+            <Route path="/builder/:id" element={<Builder />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="/notifications" element={<Notification />} />

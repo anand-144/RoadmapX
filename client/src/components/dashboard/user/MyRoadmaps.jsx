@@ -212,7 +212,7 @@ const MyRoadmaps = () => {
                   </Link>
 
                   <Link
-                    to={`/builder/edit/${roadmap._id}`}
+                    to={`/builder/${roadmap._id}`}
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-slate-200"
                   >
                     <Pencil size={16} />

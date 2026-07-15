@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react"
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useParams, useNavigate } from "react-router-dom";
 
 import BuilderHeader from "../components/builder/BuilderHeader";
 import BuilderSidebar from "../components/builder/BuilderSidebar";
@@ -12,6 +13,11 @@ import TopicList from "../components/builder/TopicList";
 import TagsInput from "../components/builder/TagsInput";
 
 const Builder = () => {
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const isEditMode = Boolean(id);
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -32,6 +38,10 @@ const Builder = () => {
     try {
       setLoading(true);
 
+      // ==========================
+      // Validation
+      // ==========================
+
       if (!formData.title.trim()) {
         return toast.error("Title is required.");
       }
@@ -44,10 +54,6 @@ const Builder = () => {
         return toast.error("Please select a category.");
       }
 
-      // ==========================
-      // Publish Validation
-      // ==========================
-
       if (
         status === "Published" &&
         formData.topics.length === 0
@@ -57,50 +63,85 @@ const Builder = () => {
         );
       }
 
-      // Validate every topic
       for (const topic of formData.topics) {
         if (!topic.title.trim()) {
           return toast.error("Every topic needs a title.");
         }
-      }
 
-      // ==========================
-      // API Call
-      // ==========================
+        for (const resource of topic.resources) {
+          if (!resource.title.trim()) {
+            return toast.error(
+              `Every resource in "${topic.title}" needs a title.`
+            );
+          }
+
+          if (!resource.url.trim()) {
+            return toast.error(
+              `Every resource in "${topic.title}" needs a URL.`
+            );
+          }
+        }
+      }
 
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/roadmaps`,
-        {
-          ...formData,
-          status,
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      };
+
+      let res;
+
+      // ==========================
+      // Edit Mode
+      // ==========================
+
+      if (isEditMode) {
+        res = await axios.put(
+          `${import.meta.env.VITE_API_URL}/roadmaps/${id}`,
+          {
+            ...formData,
+            status,
           },
-        }
-      );
+          config
+        );
 
-      console.log(res.data);
+        toast.success("Roadmap updated successfully!");
 
-      toast(res.data.message);
+        navigate("/dashboard");
+      }
 
-      // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        category: "",
-        difficulty: "Beginner",
-        estimatedTime: "",
-        icon: "",
-        tags: [],
-        topics: [],
-        status: "Draft",
-      });
+      // ==========================
+      // Create Mode
+      // ==========================
 
+      else {
+        res = await axios.post(
+          `${import.meta.env.VITE_API_URL}/roadmaps`,
+          {
+            ...formData,
+            status,
+          },
+          config
+        );
 
+        toast.success(res.data.message);
+
+        setFormData({
+          title: "",
+          description: "",
+          category: "",
+          difficulty: "Beginner",
+          estimatedTime: "",
+          icon: "",
+          tags: [],
+          topics: [],
+          status: "Draft",
+        });
+
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.log(error);
 
@@ -137,11 +178,66 @@ const Builder = () => {
     fetchCategories();
   }, []);
 
+  const fetchRoadmap = async () => {
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/roadmaps/id/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const roadmap = res.data.roadmap;
+
+      setFormData({
+        title: roadmap.title || "",
+        description: roadmap.description || "",
+        category: roadmap.category?._id || "",
+        difficulty: roadmap.difficulty || "Beginner",
+        estimatedTime: roadmap.estimatedTime || "",
+        icon: roadmap.icon || "",
+        tags: roadmap.tags || [],
+        topics: roadmap.topics.map((topic) => ({
+          id: topic._id,
+          title: topic.title,
+          description: topic.description,
+          order: topic.order,
+          resources: topic.resources.map((resource) => ({
+            id: resource._id,
+            title: resource.title,
+            type: resource.type,
+            url: resource.url,
+          })),
+        })),
+        status: roadmap.status,
+      });
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditMode) {
+      fetchRoadmap();
+    }
+  }, [id])
+
   return (
     <div className="min-h-screen bg-black pt-28 text-white">
       <div className="mx-auto max-w-[1700px] px-6">
 
-        <BuilderHeader />
+        <BuilderHeader
+          isEditMode={isEditMode}
+        />
 
         <div className="mt-10 grid gap-8 xl:grid-cols-12">
 

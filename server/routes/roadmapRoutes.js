@@ -3,6 +3,7 @@ import {
   createRoadmap,
   getRoadmaps,
   getRoadmapBySlug,
+  getRoadmapById,     
   getFeaturedRoadmaps,
   getMyRoadmaps,
   updateRoadmap,
@@ -30,6 +31,7 @@ router.get("/featured", getFeaturedRoadmaps);
 
 // Get logged-in user's roadmaps
 router.get("/my", protect, getMyRoadmaps);
+router.get("/id/:id", protect, getRoadmapById);
 
 // Create roadmap
 router.post("/", protect, createRoadmap);

@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
-  Save,
-  Rocket,
+  Pencil,
+  Plus,
 } from "lucide-react";
 
-const BuilderHeader = () => {
+const BuilderHeader = ({ isEditMode }) => {
   return (
     <motion.div
       initial={{
@@ -29,32 +29,42 @@ const BuilderHeader = () => {
           <ArrowLeft size={20} />
         </Link>
 
-        <div>
-          <h1 className="text-3xl font-bold">
-            Create New Roadmap
-          </h1>
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400/10">
+            {isEditMode ? (
+              <Pencil
+                size={26}
+                className="text-yellow-400"
+              />
+            ) : (
+              <Plus
+                size={26}
+                className="text-yellow-400"
+              />
+            )}
+          </div>
 
-          <p className="mt-1 text-sm text-gray-400">
-            Build a structured learning roadmap and share it with the community.
-          </p>
+          <div>
+            <h1 className="text-3xl font-bold">
+              {isEditMode
+                ? "Edit Roadmap"
+                : "Create Roadmap"}
+            </h1>
+
+            <p className="mt-1 text-sm text-gray-400">
+              {isEditMode
+                ? "Update your roadmap and publish the latest version."
+                : "Build a structured learning roadmap for the community."}
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Right */}
-      <div className="flex flex-wrap items-center gap-4">
-        <button
-          className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-6 py-3 font-medium transition hover:border-white/20 hover:bg-white/10 cursor-pointer"
-        >
-          <Save size={18} />
-          Save Draft
-        </button>
-
-        <button
-          className="flex items-center gap-2 rounded-2xl bg-yellow-400 px-6 py-3 font-semibold text-black transition hover:bg-yellow-300 cursor-pointer"
-        >
-          <Rocket size={18} />
-          Publish
-        </button>
+      <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/10 px-5 py-3">
+        <span className="text-sm font-medium text-yellow-300">
+          {isEditMode ? "Editing Mode" : "Creating New Roadmap"}
+        </span>
       </div>
     </motion.div>
   );

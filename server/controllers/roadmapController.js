@@ -238,6 +238,46 @@ export const getRoadmapBySlug = async (req, res) => {
   }
 };
 
+// ==========================
+// Get Roadmap By ID
+// ==========================
+export const getRoadmapById = async (req, res) => {
+  try {
+    const roadmap = await Roadmap.findById(req.params.id)
+      .populate("category", "name slug icon")
+      .populate("createdBy", "name username");
+
+    if (!roadmap) {
+      return res.status(404).json({
+        success: false,
+        message: "Roadmap not found.",
+      });
+    }
+
+    // Only owner or admin
+    if (
+      roadmap.createdBy._id.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      roadmap,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 export const getFeaturedRoadmaps = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -386,8 +426,6 @@ export const updateRoadmap = async (req, res) => {
 
 export const toggleFeaturedRoadmap = async (req, res) => {
   try {
-    const { isFeatured } = req.body;
-
     const roadmap = await Roadmap.findById(req.params.id);
 
     if (!roadmap) {
@@ -397,7 +435,8 @@ export const toggleFeaturedRoadmap = async (req, res) => {
       });
     }
 
-    roadmap.isFeatured = Boolean(isFeatured);
+    // Toggle
+    roadmap.isFeatured = !roadmap.isFeatured;
 
     await roadmap.save();
 
@@ -408,7 +447,6 @@ export const toggleFeaturedRoadmap = async (req, res) => {
         : "Roadmap removed from featured.",
       roadmap,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
