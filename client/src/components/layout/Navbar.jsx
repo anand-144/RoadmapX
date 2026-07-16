@@ -271,7 +271,7 @@ const Navbar = () => {
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-black">
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <ChevronDown size={18} />
+                  <ChevronDown size={18} className="text-white"/>
                 </button>
 
                 {profileOpen && (

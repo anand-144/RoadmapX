@@ -8,9 +8,16 @@ import Overview from "../components/admin/overview/Overview"
 import CategoryManagement from "../components/admin/categories/CategoryManagement";
 import RoadmapManagement from "../components/admin/roadmaps/RoadmapManagement";
 import Analytics from "../components/admin/analytics/Analytics";
+import { useSearchParams } from "react-router-dom";
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+const [searchParams, setSearchParams] = useSearchParams();
+
+const activeTab = searchParams.get("tab") || "overview";
+
+const setActiveTab = (tab) => {
+  setSearchParams({ tab });
+};
 
   const renderContent = () => {
     switch (activeTab) {
@@ -53,7 +60,7 @@ const Admin = () => {
 
         </div>
 
-      </div>
+      </div>  
 
     </div>
   );

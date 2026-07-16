@@ -170,15 +170,60 @@ export const deleteUser = async (req, res) => {
 
 export const getAllRoadmaps = async (req, res) => {
   try {
-    const roadmaps = await Roadmap.find()
-      .populate("category", "name slug")
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const search = req.query.search || "";
+    const status = req.query.status || "All";
+
+    const skip = (page - 1) * limit;
+
+    const query = {};
+
+    // Search
+    if (search.trim()) {
+      query.$or = [
+        {
+          title: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          description: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    // Status Filter
+    if (status !== "All") {
+      query.status = status;
+    }
+
+    const totalRoadmaps = await Roadmap.countDocuments(query);
+
+    const roadmaps = await Roadmap.find(query)
+      .populate("category", "name slug icon")
       .populate("createdBy", "name username")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       success: true,
-      count: roadmaps.length,
       roadmaps,
+      pagination: {
+        page,
+        limit,
+        totalRoadmaps,
+        totalPages: Math.ceil(totalRoadmaps / limit),
+        hasNextPage:
+          page < Math.ceil(totalRoadmaps / limit),
+        hasPrevPage: page > 1,
+      },
     });
   } catch (error) {
     res.status(500).json({
