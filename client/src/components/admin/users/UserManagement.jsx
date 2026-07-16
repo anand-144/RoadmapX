@@ -9,10 +9,17 @@ import UserCard from "./UserCard";
 import UserSkeleton from "./UserSkeleton";
 import EmptyUsers from "./EmptyUsers";
 import DeleteUserModal from "./DeleteUserModal";
+import Pagination from "./Pagination";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [pagination, setPagination] = useState({
+    page: 1,
+    totalPages: 1,
+    totalUsers: 0,
+  });
 
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -26,6 +33,7 @@ const UserManagement = () => {
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [page, setPage] = useState(1);
 
   const fetchUsers = async () => {
     try {
@@ -34,7 +42,7 @@ const UserManagement = () => {
       const token = localStorage.getItem("token");
 
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/admin/users?search=${search}&role=${role}`,
+        `${import.meta.env.VITE_API_URL}/admin/users?page=${page}&limit=10&search=${search}&role=${role}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -42,7 +50,11 @@ const UserManagement = () => {
         }
       );
 
-     setUsers(data.users);
+      setUsers(data.users);
+
+      if (data.pagination) {
+        setPagination(data.pagination);
+      }
 
 
       if (data.stats) {
@@ -55,10 +67,14 @@ const UserManagement = () => {
     }
   };
 
+  useEffect(() => {
+    setPage(1);
+  }, [search, role]);
 
   useEffect(() => {
     fetchUsers();
-  }, [search, role]);
+  }, [page, search, role]);
+
 
   return (
     <div className="space-y-8">
@@ -78,7 +94,7 @@ const UserManagement = () => {
         </div>
 
         <div className="rounded-2xl bg-yellow-400 px-6 py-3 font-semibold text-black">
-          {users.length} Users
+          {pagination.totalUsers || users.length} Users
         </div>
 
       </div>
@@ -147,6 +163,12 @@ const UserManagement = () => {
         setOpen={setDeleteModal}
         user={selectedUser}
         refresh={fetchUsers}
+      />
+
+      <Pagination
+        page={page}
+        totalPages={pagination.totalPages}
+        onPageChange={setPage}
       />
     </div>
   );

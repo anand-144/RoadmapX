@@ -50,7 +50,40 @@ export const getDashboardStats = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
+    const { search = "", role = "All" } = req.query;
+
+    const query = {};
+
+    // Role filter
+    if (role !== "All") {
+      query.role = role;
+    }
+
+    // Search filter
+    if (search.trim()) {
+      query.$or = [
+        {
+          name: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          username: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+        {
+          email: {
+            $regex: search,
+            $options: "i",
+          },
+        },
+      ];
+    }
+
+    const users = await User.find(query)
       .select("-password")
       .sort({ createdAt: -1 });
 
