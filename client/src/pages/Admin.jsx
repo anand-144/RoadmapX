@@ -3,10 +3,12 @@ import { useState } from "react";
 import AdminHeader from "../components/admin/AdminHeader";
 import AdminSidebar from "../components/admin/AdminSidebar";
 
+
 import Overview from "../components/admin/overview/Overview"
 
 import CategoryManagement from "../components/admin/categories/CategoryManagement";
 import RoadmapManagement from "../components/admin/roadmaps/RoadmapManagement";
+import UserManagement from "../components/admin/users/UserManagement";
 import Analytics from "../components/admin/analytics/Analytics";
 import { useSearchParams } from "react-router-dom";
 
@@ -29,6 +31,9 @@ const setActiveTab = (tab) => {
 
       case "roadmaps":
         return <RoadmapManagement />;
+
+      case "users":
+      return <UserManagement />;
 
       case "analytics":
         return <Analytics />;
