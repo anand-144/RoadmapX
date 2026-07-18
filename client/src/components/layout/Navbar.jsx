@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   Search,
@@ -12,6 +13,7 @@ import {
   ChevronDown,
   LayoutDashboard,
   Shield,
+  Trash2,
 } from "lucide-react";
 
 import toast from "react-hot-toast";
@@ -20,6 +22,12 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [notificationLoading, setNotificationLoading] = useState(false);
+  const notificationRef = useRef(null);
+
   const [search, setSearch] = useState("");
 
   const profileRef = useRef(null);
@@ -50,18 +58,114 @@ const Navbar = () => {
     setSearchOpen(false);
     setMenuOpen(false);
   };
+
+  const token = localStorage.getItem("token");
+
+  const fetchNotifications = async () => {
+    if (!token) return;
+
+    try {
+      setNotificationLoading(true);
+
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/notifications`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNotifications(data.notifications || []);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setNotificationLoading(false);
+    }
+  };
+
+
+  const markAsRead = async (id) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/notifications/${id}/read`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchNotifications();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const markAllRead = async () => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/notifications/read-all`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchNotifications();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteNotification = async (id) => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/notifications/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchNotifications();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unreadCount = notifications.filter(
+    (item) => !item.isRead
+  ).length;
+
+
   const navLinkClass = ({ isActive }) =>
     `transition-all duration-300 font-medium ${isActive ? "text-white" : "text-gray-400 hover:text-white"
     }`;
 
   useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
-      // Close profile dropdown
+
       if (
         profileRef.current &&
         !profileRef.current.contains(event.target)
       ) {
         setProfileOpen(false);
+      }
+
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
+        setNotificationOpen(false);
       }
 
       if (
@@ -72,7 +176,6 @@ const Navbar = () => {
         setMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
@@ -250,10 +353,93 @@ const Navbar = () => {
               )}
             </div>
 
-            <button className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:border-white hover:text-white">
-              <Bell size={19} />
-              <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-red-600" />
-            </button>
+            <div ref={notificationRef} className="relative">
+
+              <button
+                onClick={() => {
+                  setNotificationOpen(!notificationOpen);
+
+                  if (!notificationOpen) {
+                    fetchNotifications();
+                  }
+                }}
+                className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-400 transition hover:border-white hover:text-white"
+              >
+                <Bell size={19} />
+
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {notificationOpen && (
+                <div className="absolute right-0 mt-3 w-96 overflow-hidden rounded-2xl border border-white/10 bg-[#111] shadow-2xl z-50">
+
+                  <div className="flex items-center justify-between border-b border-white/10 p-4">
+                    <h3 className="font-semibold text-white">Notifications</h3>
+
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={markAllRead}
+                        className="text-xs text-yellow-400 hover:underline"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="max-h-[450px] overflow-y-auto">
+
+                    {notifications.length === 0 ? (
+                      <div className="p-8 text-center text-white">
+                        No notifications yet.
+                      </div>
+                    ) : (
+                      notifications.map((notification) => (
+                        <div
+                          key={notification._id}
+                          onClick={() => {
+                            if (!notification.isRead) {
+                              markAsRead(notification._id);
+                            }
+                          }}
+                          className={`group border-b border-white/5 p-4 transition hover:bg-white/5 ${!notification.isRead ? "bg-yellow-500/5" : ""
+                            }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+
+                            <div className="flex-1">
+                              <p className="text-sm text-white font-medium">
+                                {notification.message}
+                              </p>
+
+                              <p className="mt-1 text-xs text-yellow-500 font-medium">
+                                {new Date(notification.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteNotification(notification._id);
+                              }}
+                              className="rounded-lg p-2 text-white transition hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
+                            >
+                              <Trash2 size={16}/>
+                            </button>
+
+                          </div>
+                        </div>
+                      ))
+                    )}
+
+                  </div>
+                </div>
+              )}
+
+            </div>
 
             <Link
               to="/builder"
@@ -271,7 +457,7 @@ const Navbar = () => {
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-black">
                     {user.name?.charAt(0).toUpperCase()}
                   </div>
-                  <ChevronDown size={18} className="text-white"/>
+                  <ChevronDown size={18} className="text-white" />
                 </button>
 
                 {profileOpen && (

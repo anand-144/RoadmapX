@@ -1,6 +1,6 @@
 import Follow from "../models/Follow.js";
 import User from "../models/User.js";
-import Notification from "../models/Notification.js";
+import createNotification from "../utils/createNotification.js";
 
 // Follow User
 export const followUser = async (req, res) => {
@@ -45,26 +45,12 @@ export const followUser = async (req, res) => {
     });
 
     // Create notification
-    await Notification.findOneAndUpdate(
-      {
-        recipient: userId,
-        sender: req.user._id,
-        type: "follow",
-      },
-      {
-        recipient: userId,
-        sender: req.user._id,
-        type: "follow",
-        message: `${req.user.username} started following you.`,
-        referenceId: follow._id,
-        isRead: false,
-      },
-      {
-        upsert: true,
-        new: true,
-        setDefaultsOnInsert: true,
-      },
-    );
+    await createNotification({
+      recipient: user._id,
+      sender: req.user._id,
+      type: "follow",
+      message: `${req.user.name} started following you.`,
+    });
 
     res.status(201).json({
       success: true,

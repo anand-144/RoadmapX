@@ -1,5 +1,6 @@
 import Like from "../models/Like.js";
 import Roadmap from "../models/Roadmap.js";
+import createNotification from "../utils/createNotification.js";
 
 // Like Roadmap
 export const likeRoadmap = async (req, res) => {
@@ -32,6 +33,19 @@ export const likeRoadmap = async (req, res) => {
       roadmap: roadmapId,
     });
 
+    // Keep roadmap likes array updated
+    roadmap.likes.push(req.user._id);
+    await roadmap.save();
+
+    // Create notification
+    await createNotification({
+      recipient: roadmap.createdBy,
+      sender: req.user._id,
+      roadmap: roadmap._id,
+      type: "like",
+      message: `${req.user.name} liked your roadmap.`,
+    });
+
     res.status(201).json({
       success: true,
       message: "Roadmap liked successfully.",
@@ -61,6 +75,16 @@ export const unlikeRoadmap = async (req, res) => {
         message: "Like not found.",
       });
     }
+
+    // Remove user from roadmap likes array
+    await Roadmap.findByIdAndUpdate(
+      roadmapId,
+      {
+        $pull: {
+          likes: req.user._id,
+        },
+      }
+    );
 
     res.status(200).json({
       success: true,

@@ -1,5 +1,6 @@
 import Comment from "../models/Comment.js";
 import Roadmap from "../models/Roadmap.js";
+import createNotification from "../utils/createNotification.js";
 
 // Add Comment
 export const addComment = async (req, res) => {
@@ -27,6 +28,15 @@ export const addComment = async (req, res) => {
       user: req.user._id,
       roadmap: roadmapId,
       content,
+    });
+
+    // Create notification
+    await createNotification({
+      recipient: roadmap.createdBy,
+      sender: req.user._id,
+      roadmap: roadmap._id,
+      type: "comment",
+      message: `${req.user.name} commented on your roadmap.`,
     });
 
     const populatedComment = await Comment.findById(comment._id)

@@ -1,7 +1,8 @@
 import Bookmark from "../models/Bookmark.js";
 import Roadmap from "../models/Roadmap.js";
+import createNotification from "../utils/createNotification.js";
 
-// Add bookmarks
+// Add Bookmark
 export const addBookmarks = async (req, res) => {
   try {
     const { roadmapId } = req.params;
@@ -15,21 +16,38 @@ export const addBookmarks = async (req, res) => {
         message: "Roadmap not found.",
       });
     }
+
     // Check if already bookmarked
-    const exisitngBookmark = await Bookmark.findOne({
+    const existingBookmark = await Bookmark.findOne({
       user: req.user._id,
       roadmap: roadmapId,
     });
-    if (exisitngBookmark) {
+
+    if (existingBookmark) {
       return res.status(400).json({
         success: false,
         message: "Roadmap already bookmarked.",
       });
     }
+
     const bookmark = await Bookmark.create({
       user: req.user._id,
       roadmap: roadmapId,
     });
+
+    // Keep roadmap saves array updated
+    roadmap.saves.push(req.user._id);
+    await roadmap.save();
+
+    // Create notification
+    await createNotification({
+      recipient: roadmap.createdBy,
+      sender: req.user._id,
+      roadmap: roadmap._id,
+      type: "bookmark",
+      message: `${req.user.name} bookmarked your roadmap.`,
+    });
+
     res.status(201).json({
       success: true,
       message: "Roadmap bookmarked successfully.",
@@ -37,9 +55,9 @@ export const addBookmarks = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-        success: false,
-        message: error.message,
-    })
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -59,6 +77,16 @@ export const removeBookmark = async (req, res) => {
         message: "Bookmark not found.",
       });
     }
+
+    // Remove from roadmap saves array
+    await Roadmap.findByIdAndUpdate(
+      roadmapId,
+      {
+        $pull: {
+          saves: req.user._id,
+        },
+      }
+    );
 
     res.status(200).json({
       success: true,
