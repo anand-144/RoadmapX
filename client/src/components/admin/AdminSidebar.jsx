@@ -35,11 +35,6 @@ const menuItems = [
     label: "Analytics",
     icon: BarChart3,
   },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: Settings,
-  },
 ];
 
 const AdminSidebar = ({
