@@ -80,6 +80,6 @@ Analytics
 ==========================================
 */
 
-router.get("/analytics", getPlatformAnalytics);
+router.get("/analytics", protect,adminOnly, getPlatformAnalytics);
 
 export default router;

@@ -418,25 +418,45 @@ export const getAllCategories = async (req, res) => {
 
 export const getPlatformAnalytics = async (req, res) => {
   try {
+    // ==========================
+    // Basic Stats
+    // ==========================
+
     const [
-      totalViews,
-      totalLikes,
-      totalBookmarks,
-      publishedRoadmaps,
-      draftRoadmaps,
+      totalUsers,
+      totalRoadmaps,
+      totalCategories,
     ] = await Promise.all([
-      Roadmap.aggregate([
+      User.countDocuments(),
+      Roadmap.countDocuments(),
+      Category.countDocuments(),
+    ]);
+
+    // ==========================
+    // Views
+    // ==========================
+
+    const totalViewsResult =
+      await Roadmap.aggregate([
         {
           $group: {
             _id: null,
-            views: {
+            total: {
               $sum: "$views",
             },
           },
         },
-      ]),
+      ]);
 
-      Roadmap.aggregate([
+    const totalViews =
+      totalViewsResult[0]?.total || 0;
+
+    // ==========================
+    // Likes
+    // ==========================
+
+    const totalLikesResult =
+      await Roadmap.aggregate([
         {
           $project: {
             likes: {
@@ -452,9 +472,17 @@ export const getPlatformAnalytics = async (req, res) => {
             },
           },
         },
-      ]),
+      ]);
 
-      Roadmap.aggregate([
+    const totalLikes =
+      totalLikesResult[0]?.total || 0;
+
+    // ==========================
+    // Saves
+    // ==========================
+
+    const totalBookmarksResult =
+      await Roadmap.aggregate([
         {
           $project: {
             saves: {
@@ -470,25 +498,155 @@ export const getPlatformAnalytics = async (req, res) => {
             },
           },
         },
-      ]),
+      ]);
 
-      Roadmap.countDocuments({
+    const totalBookmarks =
+      totalBookmarksResult[0]?.total || 0;
+
+    // ==========================
+    // Published / Draft
+    // ==========================
+
+    const publishedRoadmaps =
+      await Roadmap.countDocuments({
         status: "Published",
-      }),
+      });
 
-      Roadmap.countDocuments({
+    const draftRoadmaps =
+      await Roadmap.countDocuments({
         status: "Draft",
-      }),
-    ]);
+      });
+
+    // ==========================
+    // Monthly Users
+    // ==========================
+
+    const monthlyUsers =
+      await User.aggregate([
+        {
+          $group: {
+            _id: {
+              month: {
+                $month: "$createdAt",
+              },
+            },
+            users: {
+              $sum: 1,
+            },
+          },
+        },
+        {
+          $sort: {
+            "_id.month": 1,
+          },
+        },
+      ]);
+
+    const monthNames = [
+      "",
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const monthlyUsersData =
+      monthlyUsers.map((item) => ({
+        month:
+          monthNames[item._id.month],
+        users: item.users,
+      }));
+
+    // ==========================
+    // Category Distribution
+    // ==========================
+
+    const categoryDistribution =
+      await Roadmap.aggregate([
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $unwind: "$category",
+        },
+        {
+          $group: {
+            _id: "$category.name",
+            count: {
+              $sum: 1,
+            },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            name: "$_id",
+            count: 1,
+          },
+        },
+        {
+          $sort: {
+            count: -1,
+          },
+        },
+      ]);
+
+    // ==========================
+    // Top Roadmaps
+    // ==========================
+
+    const topRoadmaps =
+      await Roadmap.find()
+        .populate(
+          "category",
+          "name"
+        )
+        .sort({
+          views: -1,
+        })
+        .limit(5)
+        .select(
+          "title views category"
+        );
+
+    // ==========================
+    // Response
+    // ==========================
 
     res.status(200).json({
       success: true,
+
       analytics: {
-        totalViews: totalViews[0]?.views || 0,
-        totalLikes: totalLikes[0]?.total || 0,
-        totalBookmarks: totalBookmarks[0]?.total || 0,
+        totalUsers,
+        totalRoadmaps,
+        totalCategories,
+
+        totalViews,
+        totalLikes,
+        totalBookmarks,
+
         publishedRoadmaps,
         draftRoadmaps,
+
+        monthlyUsers:
+          monthlyUsersData,
+
+        categoryDistribution,
+
+        topRoadmaps,
       },
     });
   } catch (error) {
