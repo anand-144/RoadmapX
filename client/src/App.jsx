@@ -17,7 +17,6 @@ import RoadmapDetails from "./pages/RoadmapDetails";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Notification from "./pages/Notification";
-import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -58,7 +57,6 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="/notifications" element={<Notification />} />
-            <Route path="/settings" element={<Settings />} />
           </Route>
 
           {/* Admin Routes */}
