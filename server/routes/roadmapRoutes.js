@@ -13,6 +13,7 @@ import {
 
 import { protect } from "../middleware/authMiddleware.js";
 import { adminOnly } from "../middleware/adminMiddleware.js";
+import { optionalProtect } from "../middleware/optionalProtect.js";
 
 const router = express.Router();
 
@@ -51,6 +52,6 @@ router.delete("/:id", protect, deleteRoadmap);
 
 
 // Get single roadmap by slug
-router.get("/:slug", getRoadmapBySlug);
+router.get("/:slug", optionalProtect, getRoadmapBySlug);
 
 export default router;

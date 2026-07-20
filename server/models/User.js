@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpire: {
       type: Date,
     },
+    viewedRoadmaps: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Roadmap",
+      },
+    ],
   },
   { timestamps: true },
 );

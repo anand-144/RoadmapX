@@ -226,6 +226,23 @@ export const getRoadmapBySlug = async (req, res) => {
       });
     }
 
+    // Increment view only once per logged-in user
+    if (req.user) {
+      const alreadyViewed = req.user.viewedRoadmaps.some(
+        (id) => id.toString() === roadmap._id.toString()
+      );
+
+      if (!alreadyViewed) {
+        roadmap.views += 1;
+
+        await roadmap.save();
+
+        req.user.viewedRoadmaps.push(roadmap._id);
+
+        await req.user.save();
+      }
+    }
+
     res.status(200).json({
       success: true,
       roadmap,

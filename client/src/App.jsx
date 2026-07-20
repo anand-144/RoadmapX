@@ -21,17 +21,18 @@ import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import RoadmapGraphPage from "./pages/RoadmapGraphPage";
 
 const App = () => {
   const location = useLocation();
 
   // Routes where Navbar & Footer should NOT appear
- const hideLayout =
-  // location.pathname === "/dashboard" ||
-  location.pathname === "/login" ||
-  location.pathname === "/register" ||
-  location.pathname === "/forgot-password" ||
-  location.pathname.startsWith("/reset-password");
+  const hideLayout =
+    // location.pathname === "/dashboard" ||
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    location.pathname === "/forgot-password" ||
+    location.pathname.startsWith("/reset-password");
 
   return (
     <>
@@ -43,12 +44,16 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/roadmap/:slug" element={<RoadmapDetails />} />
+          <Route
+            path="/roadmap/:slug/graph"
+            element={<RoadmapGraphPage />}
+          />
 
           {/* Authentication */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token"  element={<ResetPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
