@@ -22,6 +22,10 @@ import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import RoadmapGraphPage from "./pages/RoadmapGraphPage";
+import About from "./pages/About";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import Contact from "./pages/Contact";
 
 const App = () => {
   const location = useLocation();
@@ -42,6 +46,13 @@ const App = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsConditions />} />
+
+
+
           <Route path="/explore" element={<Explore />} />
           <Route path="/roadmap/:slug" element={<RoadmapDetails />} />
           <Route
