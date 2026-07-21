@@ -8,7 +8,6 @@ import {
   Menu,
   X,
   User,
-  Settings,
   LogOut,
   ChevronDown,
   LayoutDashboard,
@@ -21,7 +20,8 @@ import toast from "react-hot-toast";
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileProfileOpen, setMobileProfileOpen] = useState(false);
+  const [desktopProfileOpen, setDesktopProfileOpen] = useState(false);
 
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -30,25 +30,27 @@ const Navbar = () => {
 
   const [search, setSearch] = useState("");
 
-  const profileRef = useRef(null);
+  const mobileProfileRef = useRef(null);
+  const desktopProfileRef = useRef(null);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
-
-
   const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setProfileOpen(false);
+    setMobileProfileOpen(false);
+    setDesktopProfileOpen(false);
 
-    toast.success("Logged out successfully ")
+    toast.success("Logged out successfully");
 
     setTimeout(() => {
       window.location.href = "/";
     }, 1000);
   };
+
   const handleSearch = () => {
     if (!search.trim()) return;
 
@@ -58,8 +60,6 @@ const Navbar = () => {
     setSearchOpen(false);
     setMenuOpen(false);
   };
-
-  const token = localStorage.getItem("token");
 
   const fetchNotifications = async () => {
     if (!token) return;
@@ -83,7 +83,6 @@ const Navbar = () => {
       setNotificationLoading(false);
     }
   };
-
 
   const markAsRead = async (id) => {
     try {
@@ -138,27 +137,32 @@ const Navbar = () => {
     }
   };
 
-  const unreadCount = notifications.filter(
-    (item) => !item.isRead
-  ).length;
-
+  const unreadCount = notifications.filter((item) => !item.isRead).length;
 
   const navLinkClass = ({ isActive }) =>
-    `transition-all duration-300 font-medium ${isActive ? "text-white" : "text-gray-400 hover:text-white"
+    `transition-all duration-300 font-medium ${
+      isActive ? "text-white" : "text-gray-400 hover:text-white"
     }`;
 
   useEffect(() => {
     fetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      if (
+        mobileProfileRef.current &&
+        !mobileProfileRef.current.contains(event.target)
+      ) {
+        setMobileProfileOpen(false);
+      }
 
       if (
-        profileRef.current &&
-        !profileRef.current.contains(event.target)
+        desktopProfileRef.current &&
+        !desktopProfileRef.current.contains(event.target)
       ) {
-        setProfileOpen(false);
+        setDesktopProfileOpen(false);
       }
 
       if (
@@ -176,6 +180,7 @@ const Navbar = () => {
         setMenuOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
@@ -192,21 +197,30 @@ const Navbar = () => {
               R
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold tracking-wide text-white">RoadmapX</h1>
+              <h1 className="text-xl font-bold tracking-wide text-white">
+                RoadmapX
+              </h1>
               <p className="text-xs text-yellow-500">Learn • Build • Share</p>
             </div>
           </Link>
 
           <nav className="hidden items-center gap-10 lg:flex">
-            <NavLink to="/" className={navLinkClass}>Home</NavLink>
-            <NavLink to="/explore" className={navLinkClass}>Explore</NavLink>
-            <NavLink to="/builder" className={navLinkClass}>Builder</NavLink>
-            <NavLink to="/dashboard" className={navLinkClass}>Dashboard</NavLink>
+            <NavLink to="/" className={navLinkClass}>
+              Home
+            </NavLink>
+            <NavLink to="/explore" className={navLinkClass}>
+              Explore
+            </NavLink>
+            <NavLink to="/builder" className={navLinkClass}>
+              Builder
+            </NavLink>
+            <NavLink to="/dashboard" className={navLinkClass}>
+              Dashboard
+            </NavLink>
           </nav>
 
           {/* Desktop Search */}
           <div className="hidden items-center lg:flex">
-
             {!searchOpen ? (
               <button
                 onClick={() => setSearchOpen(true)}
@@ -216,9 +230,7 @@ const Navbar = () => {
               </button>
             ) : (
               <div className="flex items-center gap-2">
-
                 <div className="relative animate-in fade-in slide-in-from-right-2 duration-300">
-
                   <Search
                     size={18}
                     className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
@@ -237,7 +249,6 @@ const Navbar = () => {
                       }
                     }}
                   />
-
                 </div>
 
                 <button
@@ -249,19 +260,17 @@ const Navbar = () => {
                 >
                   <X size={19} />
                 </button>
-
               </div>
             )}
-
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Mobile Profile */}
-            <div ref={profileRef} className="relative md:hidden">
+            {/* Mobile Profile (shown below lg breakpoint, hidden on md+ via the desktop block below) */}
+            <div ref={mobileProfileRef} className="relative md:hidden">
               {user ? (
                 <>
                   <button
-                    onClick={() => setProfileOpen(!profileOpen)}
+                    onClick={() => setMobileProfileOpen(!mobileProfileOpen)}
                     className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:border-white"
                   >
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white font-bold text-sm text-black">
@@ -269,9 +278,8 @@ const Navbar = () => {
                     </div>
                   </button>
 
-                  {profileOpen && (
+                  {mobileProfileOpen && (
                     <div className="fixed right-4 top-24 z-[60] w-72 max-w-[calc(100vw-2rem)] rounded-2xl border border-white/10 bg-black/80 p-2 shadow-2xl">
-
                       <div className="border-b border-white/10 p-3">
                         <h3 className="font-semibold text-white">
                           {user.name}
@@ -285,7 +293,7 @@ const Navbar = () => {
                       <Link
                         to={`/profile/${user.username}`}
                         onClick={() => {
-                          setProfileOpen(false);
+                          setMobileProfileOpen(false);
                           setMenuOpen(false);
                         }}
                         className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
@@ -297,7 +305,7 @@ const Navbar = () => {
                       <Link
                         to="/dashboard"
                         onClick={() => {
-                          setProfileOpen(false);
+                          setMobileProfileOpen(false);
                           setMenuOpen(false);
                         }}
                         className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
@@ -310,7 +318,7 @@ const Navbar = () => {
                         <Link
                           to="/admin"
                           onClick={() => {
-                            setProfileOpen(false);
+                            setMobileProfileOpen(false);
                             setMenuOpen(false);
                           }}
                           className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
@@ -319,19 +327,6 @@ const Navbar = () => {
                           Admin Panel
                         </Link>
                       )}
-
-                      <Link
-                        to="/settings"
-                        onClick={() => {
-                          setProfileOpen(false);
-                          setMenuOpen(false);
-                        }}
-                        className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
-                      >
-                        <Settings size={18} />
-                        Settings
-                      </Link>
-
                       <button
                         onClick={handleLogout}
                         className="mt-2 flex w-full items-center gap-3 rounded-lg p-3 text-red-400 hover:bg-red-500/10"
@@ -339,7 +334,6 @@ const Navbar = () => {
                         <LogOut size={18} />
                         Logout
                       </button>
-
                     </div>
                   )}
                 </>
@@ -354,7 +348,6 @@ const Navbar = () => {
             </div>
 
             <div ref={notificationRef} className="relative">
-
               <button
                 onClick={() => {
                   setNotificationOpen(!notificationOpen);
@@ -376,9 +369,10 @@ const Navbar = () => {
 
               {notificationOpen && (
                 <div className="absolute right-0 mt-3 w-96 overflow-hidden rounded-2xl border border-white/10 bg-[#111] shadow-2xl z-50">
-
                   <div className="flex items-center justify-between border-b border-white/10 p-4">
-                    <h3 className="font-semibold text-white">Notifications</h3>
+                    <h3 className="font-semibold text-white">
+                      Notifications
+                    </h3>
 
                     {notifications.length > 0 && (
                       <button
@@ -391,8 +385,11 @@ const Navbar = () => {
                   </div>
 
                   <div className="max-h-[450px] overflow-y-auto">
-
-                    {notifications.length === 0 ? (
+                    {notificationLoading ? (
+                      <div className="p-8 text-center text-gray-400">
+                        Loading...
+                      </div>
+                    ) : notifications.length === 0 ? (
                       <div className="p-8 text-center text-white">
                         No notifications yet.
                       </div>
@@ -405,18 +402,20 @@ const Navbar = () => {
                               markAsRead(notification._id);
                             }
                           }}
-                          className={`group border-b border-white/5 p-4 transition hover:bg-white/5 ${!notification.isRead ? "bg-yellow-500/5" : ""
-                            }`}
+                          className={`group border-b border-white/5 p-4 transition hover:bg-white/5 ${
+                            !notification.isRead ? "bg-yellow-500/5" : ""
+                          }`}
                         >
                           <div className="flex items-start justify-between gap-3">
-
                             <div className="flex-1">
                               <p className="text-sm text-white font-medium">
                                 {notification.message}
                               </p>
 
                               <p className="mt-1 text-xs text-yellow-500 font-medium">
-                                {new Date(notification.createdAt).toLocaleString()}
+                                {new Date(
+                                  notification.createdAt
+                                ).toLocaleString()}
                               </p>
                             </div>
 
@@ -427,31 +426,30 @@ const Navbar = () => {
                               }}
                               className="rounded-lg p-2 text-white transition hover:bg-red-500/10 hover:text-red-400 group-hover:opacity-100"
                             >
-                              <Trash2 size={16}/>
+                              <Trash2 size={16} />
                             </button>
-
                           </div>
                         </div>
                       ))
                     )}
-
                   </div>
                 </div>
               )}
-
             </div>
 
             <Link
               to="/builder"
               className="hidden lg:flex items-center gap-2 rounded-xl border border-white bg-white px-5 py-3 font-semibold text-black hover:bg-black hover:text-white transition"
             >
-              <Plus size={18} />Create
+              <Plus size={18} />
+              Create
             </Link>
 
+            {/* Desktop Profile (md and up) */}
             {user ? (
-              <div ref={profileRef} className="relative hidden md:block">
+              <div ref={desktopProfileRef} className="relative hidden md:block">
                 <button
-                  onClick={() => setProfileOpen(!profileOpen)}
+                  onClick={() => setDesktopProfileOpen(!desktopProfileOpen)}
                   className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 hover:border-white"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white font-bold text-black">
@@ -460,24 +458,50 @@ const Navbar = () => {
                   <ChevronDown size={18} className="text-white" />
                 </button>
 
-                {profileOpen && (
+                {desktopProfileOpen && (
                   <div className="absolute right-0 mt-3 w-64 rounded-2xl border border-white/10 bg-[#111] p-2 shadow-2xl">
                     <div className="border-b border-white/10 p-3">
-                      <h3 className="font-semibold text-white">{user.name}</h3>
-                      <p className="text-sm text-gray-400">@{user.username}</p>
+                      <h3 className="font-semibold text-white">
+                        {user.name}
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        @{user.username}
+                      </p>
                     </div>
 
-                    <Link to={`/profile/${user.username}`} onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"><User size={18} />Profile</Link>
-                    <Link to="/dashboard" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"><LayoutDashboard size={18} />Dashboard</Link>
+                    <Link
+                      to={`/profile/${user.username}`}
+                      onClick={() => setDesktopProfileOpen(false)}
+                      className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
+                    >
+                      <User size={18} />
+                      Profile
+                    </Link>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setDesktopProfileOpen(false)}
+                      className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
+                    >
+                      <LayoutDashboard size={18} />
+                      Dashboard
+                    </Link>
 
                     {user.role === "admin" && (
-                      <Link to="/admin" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"><Shield size={18} />Admin Panel</Link>
+                      <Link
+                        to="/admin"
+                        onClick={() => setDesktopProfileOpen(false)}
+                        className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"
+                      >
+                        <Shield size={18} />
+                        Admin Panel
+                      </Link>
                     )}
-
-                    <Link to="/settings" onClick={() => setProfileOpen(false)} className="flex items-center gap-3 rounded-lg p-3 text-gray-300 hover:bg-white/10"><Settings size={18} />Settings</Link>
-
-                    <button onClick={handleLogout} className="mt-2 flex w-full items-center gap-3 rounded-lg p-3 text-red-400 hover:bg-red-500/10">
-                      <LogOut size={18} />Logout
+                    <button
+                      onClick={handleLogout}
+                      className="mt-2 flex w-full items-center gap-3 rounded-lg p-3 text-red-400 hover:bg-red-500/10"
+                    >
+                      <LogOut size={18} />
+                      Logout
                     </button>
                   </div>
                 )}
@@ -511,9 +535,11 @@ const Navbar = () => {
           />
 
           {/* Mobile Menu */}
-          <div ref={menuRef} className="fixed inset-x-0 top-20 bottom-0 z-50 overflow-y-auto border-t border-white/10 bg-[#0b0b0b] shadow-2xl lg:hidden">
+          <div
+            ref={menuRef}
+            className="fixed inset-x-0 top-20 bottom-0 z-50 overflow-y-auto border-t border-white/10 bg-[#0b0b0b] shadow-2xl lg:hidden"
+          >
             <div className="flex min-h-full flex-col px-6 py-6 pb-10">
-
               {/* Search */}
               <div className="mb-6">
                 <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3">
@@ -537,14 +563,14 @@ const Navbar = () => {
 
               {/* Navigation */}
               <div className="space-y-2">
-
                 <NavLink
                   to="/"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${isActive
-                      ? "bg-white font-semibold text-black"
-                      : "text-gray-300 hover:bg-white/10 hover:text-white"
+                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${
+                      isActive
+                        ? "bg-white font-semibold text-black"
+                        : "text-gray-300 hover:bg-white/10 hover:text-white"
                     }`
                   }
                 >
@@ -555,9 +581,10 @@ const Navbar = () => {
                   to="/explore"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${isActive
-                      ? "bg-white font-semibold text-black"
-                      : "text-gray-300 hover:bg-white/10 hover:text-white"
+                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${
+                      isActive
+                        ? "bg-white font-semibold text-black"
+                        : "text-gray-300 hover:bg-white/10 hover:text-white"
                     }`
                   }
                 >
@@ -568,9 +595,10 @@ const Navbar = () => {
                   to="/builder"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${isActive
-                      ? "bg-white font-semibold text-black"
-                      : "text-gray-300 hover:bg-white/10 hover:text-white"
+                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${
+                      isActive
+                        ? "bg-white font-semibold text-black"
+                        : "text-gray-300 hover:bg-white/10 hover:text-white"
                     }`
                   }
                 >
@@ -581,15 +609,15 @@ const Navbar = () => {
                   to="/dashboard"
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${isActive
-                      ? "bg-white font-semibold text-black"
-                      : "text-gray-300 hover:bg-white/10 hover:text-white"
+                    `flex items-center rounded-xl px-4 py-3 transition-all duration-300 ${
+                      isActive
+                        ? "bg-white font-semibold text-black"
+                        : "text-gray-300 hover:bg-white/10 hover:text-white"
                     }`
                   }
                 >
                   Dashboard
                 </NavLink>
-
               </div>
 
               {/* Create Button */}
