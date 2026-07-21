@@ -174,13 +174,13 @@ const Footer = () => {
 
         {/* Bottom Footer */}
         <div className="mt-14 flex flex-col items-center justify-between gap-5 border-t border-white/10 pt-8 md:flex-row">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-400 border-b-2">
             © {year} RoadmapX. All rights reserved.
           </p>
 
-          <p className="flex items-center gap-2 text-sm text-gray-500">
+          <p className="flex items-center gap-2 text-sm text-gray-400  border-b-2">
             Made with
-            <FaHeart className="text-white" />
+            <FaHeart className="text-red-500" />
             for developers worldwide.
           </p>
         </div>

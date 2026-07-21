@@ -10,6 +10,7 @@ import RoadmapGrid from "../components/explore/RoadmapGrid";
 import Pagination from "../components/explore/Pagination";
 import RoadmapSkeleton from "../components/explore/RoadmapSkeleton";
 import EmptyState from "../components/explore/EmptyState";
+import { Helmet } from "react-helmet-async";
 
 const Explore = () => {
   const [searchParams] = useSearchParams();
@@ -131,71 +132,83 @@ const Explore = () => {
   }, [featuredPage]);
 
   return (
-    <div className="min-h-screen bg-black pt-28 text-white">
-      <div className="mx-auto max-w-7xl px-6">
 
-        <ExploreHero
-          search={search}
-          totalRoadmaps={totalRoadmaps}
+    <>
+      <Helmet>
+        <title>Explore The Learning Roadmap | RoadmapX</title>
+
+        <meta
+          name="description"
+          content="Explore beautiful interactive learning roadmaps using RoadmapX."
         />
+      </Helmet>
 
-        <CategoryFilter
-          categories={categories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          setPage={setPage}
-        />
+      <div className="min-h-screen bg-black pt-28 text-white">
+        <div className="mx-auto max-w-7xl px-6">
 
-        <FilterBar
-          selectedDifficulty={selectedDifficulty}
-          setSelectedDifficulty={setSelectedDifficulty}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          setPage={setPage}
-        />
+          <ExploreHero
+            search={search}
+            totalRoadmaps={totalRoadmaps}
+          />
 
-        <FeaturedSection
-          featuredRoadmaps={featuredRoadmaps}
-          featuredPage={featuredPage}
-          featuredTotalPages={featuredTotalPages}
-          setFeaturedPage={setFeaturedPage}
-        />
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            setPage={setPage}
+          />
 
-        {loading ? (
-          <RoadmapSkeleton />
-        ) : roadmaps.length === 0 ? (
-          <EmptyState />
-        ) : (
-          <>
+          <FilterBar
+            selectedDifficulty={selectedDifficulty}
+            setSelectedDifficulty={setSelectedDifficulty}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            setPage={setPage}
+          />
 
-            <div className="mb-8 mt-16 flex items-end justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-white">
-                  Explore Roadmaps
-                </h2>
+          <FeaturedSection
+            featuredRoadmaps={featuredRoadmaps}
+            featuredPage={featuredPage}
+            featuredTotalPages={featuredTotalPages}
+            setFeaturedPage={setFeaturedPage}
+          />
 
-                <p className="mt-2 text-gray-400">
-                  Browse all learning paths curated by the community.
-                </p>
+          {loading ? (
+            <RoadmapSkeleton />
+          ) : roadmaps.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <>
+
+              <div className="mb-8 mt-16 flex items-end justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold text-white">
+                    Explore Roadmaps
+                  </h2>
+
+                  <p className="mt-2 text-gray-400">
+                    Browse all learning paths curated by the community.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-gray-300">
+                  {totalRoadmaps} Roadmaps
+                </div>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-sm text-gray-300">
-                {totalRoadmaps} Roadmaps
-              </div>
-            </div>
+              <RoadmapGrid roadmaps={roadmaps} />
 
-            <RoadmapGrid roadmaps={roadmaps} />
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                setPage={setPage}
+              />
+            </>
+          )}
 
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              setPage={setPage}
-            />
-          </>
-        )}
-
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

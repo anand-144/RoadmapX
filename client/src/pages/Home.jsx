@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import HomeGraph from "../components/home/HomeGraph";
 import WhySection from "../components/home/WhySection";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
 
@@ -21,7 +22,25 @@ const Home = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
+
+    <>
+      <Helmet>
+        <title>
+          RoadmapX | Create, Explore & Share Learning Roadmaps
+        </title>
+
+        <meta
+          name="description"
+          content="Discover and create learning roadmaps for Web Development, AI, React, MERN, Programming and more."
+        />
+
+        <meta
+          name="keywords"
+          content="roadmap, react roadmap, mern roadmap, programming roadmap, learning roadmap"
+        />
+      </Helmet>
+
+    <div className="relative min-h-screen overflow-hidden bg-[#050505] text-white mt-7">
       <div className="absolute inset-0">
         <div className="absolute left-0 top-0 h-[400px] w-[400px] rounded-full bg-yellow-500/10 blur-[140px]" />
         <div className="absolute right-0 top-20 h-[350px] w-[350px] rounded-full bg-yellow-500/10 blur-[140px]" />
@@ -107,6 +126,9 @@ const Home = () => {
             <WhySection />
       </section>
     </div>
+    </>
+
+    
   );
 };
 

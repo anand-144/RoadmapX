@@ -12,6 +12,8 @@ import PublishBar from "../components/builder/PublishBar";
 import TopicList from "../components/builder/TopicList";
 import TagsInput from "../components/builder/TagsInput";
 
+import { Helmet } from "react-helmet-async";
+
 const Builder = () => {
 
   const { id } = useParams();
@@ -231,77 +233,96 @@ const Builder = () => {
   }, [id])
 
   return (
-    <div className="min-h-screen bg-black pt-28 text-white">
-      <div className="mx-auto max-w-[1700px] px-6">
 
-        <BuilderHeader
-          isEditMode={isEditMode}
+    <>
+      <Helmet>
+        <title>Create Learning Roadmap | RoadmapX</title>
+
+        <meta
+          name="description"
+          content="Create interactive learning roadmaps with RoadmapX. Organize topics, resources, and learning paths for developers and students."
         />
 
-        <div className="mt-10 grid gap-8 xl:grid-cols-12">
+        <meta
+          name="keywords"
+          content="roadmap builder, create roadmap, learning roadmap, developer roadmap, RoadmapX"
+        />
+      </Helmet>
 
-          {/* Sidebar */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="xl:col-span-3"
-          >
-            <BuilderSidebar
-              formData={formData}
-            />
-          </motion.div>
 
-          {/* Editor */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-8 xl:col-span-6"
-          >
-            <BasicInfoForm
-              formData={formData}
-              setFormData={setFormData}
-              categories={categories}
-            />
+      <div className="min-h-screen bg-black pt-28 text-white">
+        <div className="mx-auto max-w-[1700px] px-6">
 
-            {/* Upcoming Components */}
+          <BuilderHeader
+            isEditMode={isEditMode}
+          />
 
-            <TagsInput
-              formData={formData}
-              setFormData={setFormData}
-            />
+          <div className="mt-10 grid gap-8 xl:grid-cols-12">
 
-            <TopicList
-              topics={formData.topics}
-              setFormData={setFormData}
-            />
-
-            <PublishBar
-              formData={formData}
-              setFormData={setFormData}
-              onSaveDraft={handleSaveDraft}
-              onPublish={handlePublish}
-              loading={loading}
-            />
-
-          </motion.div>
-
-          {/* Live Preview */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="xl:col-span-3"
-          >
-            <div className="sticky top-28">
-              <LivePreview
+            {/* Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="xl:col-span-3"
+            >
+              <BuilderSidebar
                 formData={formData}
               />
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {/* Editor */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-8 xl:col-span-6"
+            >
+              <BasicInfoForm
+                formData={formData}
+                setFormData={setFormData}
+                categories={categories}
+              />
+
+              {/* Upcoming Components */}
+
+              <TagsInput
+                formData={formData}
+                setFormData={setFormData}
+              />
+
+              <TopicList
+                topics={formData.topics}
+                setFormData={setFormData}
+              />
+
+              <PublishBar
+                formData={formData}
+                setFormData={setFormData}
+                onSaveDraft={handleSaveDraft}
+                onPublish={handlePublish}
+                loading={loading}
+              />
+
+            </motion.div>
+
+            {/* Live Preview */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="xl:col-span-3"
+            >
+              <div className="sticky top-28">
+                <LivePreview
+                  formData={formData}
+                />
+              </div>
+            </motion.div>
+
+          </div>
 
         </div>
-
       </div>
-    </div>
+    </>
+
   );
 };
 

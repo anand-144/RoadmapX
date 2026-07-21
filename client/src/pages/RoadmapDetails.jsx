@@ -9,6 +9,7 @@ import AuthorCard from "../components/roadmap/AuthorCard";
 import RoadmapComments from "../components/roadmap/RoadmapComments";
 import RelatedRoadmaps from "../components/roadmap/RelatedRoadmaps";
 import GraphBanner from "../components/roadmap/GraphBanner";
+import { Helmet } from "react-helmet-async";
 
 const RoadmapDetails = () => {
   const { slug } = useParams();
@@ -120,6 +121,10 @@ const RoadmapDetails = () => {
 
   if (loading) {
     return (
+
+
+
+
       <div className="min-h-screen bg-black pt-28 text-white">
         <div className="mx-auto max-w-7xl px-6">
           <div className="h-96 animate-pulse rounded-3xl bg-[#111]" />
@@ -141,66 +146,91 @@ const RoadmapDetails = () => {
   }
 
   return (
-  <div className="min-h-screen bg-gradient-to-b from-black via-[#090909] to-black pt-28 text-white">
 
-    <div className="mx-auto max-w-7xl space-y-14 px-6">
+    <>
+      <Helmet>
+        <title>
+          {roadmap?.title
+            ? `${roadmap.title} | RoadmapX`
+            : "Roadmap | RoadmapX"}
+        </title>
 
-      {/* Hero */}
-
-      <RoadmapHero roadmap={roadmap} />
-
-      {/* Main Content */}
-
-      <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
-
-        {/* Left */}
-
-        <div className="space-y-8">
-
-          <RoadmapContent roadmap={roadmap} />
-
-        </div>
-
-        {/* Right */}
-
-        <div className="sticky top-28 space-y-8 self-start">
-
-          <RoadmapActions
-            roadmap={roadmap}
-            onLike={handleLike}
-            onBookmark={handleBookmark}
-          />
-
-          <AuthorCard roadmap={roadmap} />
-
-        </div>
-
-      </section>
-
-      {/* Interactive Graph */}
-
-      <GraphBanner roadmap={roadmap} />
-
-      {/* Bottom */}
-
-      <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
-
-        {/* Comments */}
-
-        <RoadmapComments roadmapId={roadmap._id} />
-
-        {/* Related */}
-
-        <RelatedRoadmaps
-          roadmaps={relatedRoadmaps}
+        <meta
+          name="description"
+          content={
+            roadmap?.description ||
+            "Explore detailed learning roadmaps on RoadmapX."
+          }
         />
 
-      </section>
+        <meta
+          name="keywords"
+          content={`${roadmap?.title}, ${roadmap?.category?.name || ""}, learning roadmap, RoadmapX`}
+        />
+      </Helmet>
 
-    </div>
+      <div className="min-h-screen bg-gradient-to-b from-black via-[#090909] to-black pt-28 text-white">
 
-  </div>
-);
+        <div className="mx-auto max-w-7xl space-y-14 px-6">
+
+          {/* Hero */}
+
+          <RoadmapHero roadmap={roadmap} />
+
+          {/* Main Content */}
+
+          <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
+
+            {/* Left */}
+
+            <div className="space-y-8">
+
+              <RoadmapContent roadmap={roadmap} />
+
+            </div>
+
+            {/* Right */}
+
+            <div className="sticky top-28 space-y-8 self-start">
+
+              <RoadmapActions
+                roadmap={roadmap}
+                onLike={handleLike}
+                onBookmark={handleBookmark}
+              />
+
+              <AuthorCard roadmap={roadmap} />
+
+            </div>
+
+          </section>
+
+          {/* Interactive Graph */}
+
+          <GraphBanner roadmap={roadmap} />
+
+          {/* Bottom */}
+
+          <section className="grid gap-8 xl:grid-cols-[1fr_360px]">
+
+            {/* Comments */}
+
+            <RoadmapComments roadmapId={roadmap._id} />
+
+            {/* Related */}
+
+            <RelatedRoadmaps
+              roadmaps={relatedRoadmaps}
+            />
+
+          </section>
+
+        </div>
+
+      </div>
+    </>
+
+  );
 };
 
 export default RoadmapDetails;

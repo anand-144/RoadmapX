@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { register } from "../services/authService";
+import { Helmet } from "react-helmet-async";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -130,309 +131,325 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
 
-      <div className="grid min-h-screen lg:grid-cols-2">
+    <>
+      <Helmet>
+        <title>Create an Account | RoadmapX</title>
 
-        {/* Left Side */}
+        <meta
+          name="description"
+          content="Sign up for RoadmapX and start creating, discovering, and sharing learning roadmaps."
+        />
 
-        <div className="hidden flex-col justify-between border-r border-white/10 bg-[#050505] p-16 lg:flex">
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
 
-          <div>
+      <div className="min-h-screen bg-black text-white">
 
-            <Link
-              to="/"
-              className="flex items-center gap-3"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white bg-white text-xl font-bold text-black">
-                R
-              </div>
+        <div className="grid min-h-screen lg:grid-cols-2">
 
-              <div>
+          {/* Left Side */}
 
-                <h1 className="text-2xl font-bold">
-                  RoadmapX
-                </h1>
+          <div className="hidden flex-col justify-between border-r border-white/10 bg-[#050505] p-16 lg:flex">
 
-                <p className="text-sm text-yellow-500">
-                  Learn • Build • Share
+            <div>
+
+              <Link
+                to="/"
+                className="flex items-center gap-3"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white bg-white text-xl font-bold text-black">
+                  R
+                </div>
+
+                <div>
+
+                  <h1 className="text-2xl font-bold">
+                    RoadmapX
+                  </h1>
+
+                  <p className="text-sm text-yellow-500">
+                    Learn • Build • Share
+                  </p>
+
+                </div>
+
+              </Link>
+
+              <div className="mt-24">
+
+                <h2 className="max-w-md text-5xl font-bold leading-tight">
+                  Start building your learning journey.
+                </h2>
+
+                <p className="mt-8 max-w-lg text-lg leading-8 text-gray-400">
+                  Join thousands of developers,
+                  students, and creators building
+                  structured learning roadmaps,
+                  tracking progress, and sharing
+                  knowledge with the community.
                 </p>
 
               </div>
 
-            </Link>
+            </div>
 
-            <div className="mt-24">
-
-              <h2 className="max-w-md text-5xl font-bold leading-tight">
-                Start building your learning journey.
-              </h2>
-
-              <p className="mt-8 max-w-lg text-lg leading-8 text-gray-400">
-                Join thousands of developers,
-                students, and creators building
-                structured learning roadmaps,
-                tracking progress, and sharing
-                knowledge with the community.
-              </p>
-
+            <div className="text-gray-500">
+              © {new Date().getFullYear()} RoadmapX
             </div>
 
           </div>
 
-          <div className="text-gray-500">
-            © {new Date().getFullYear()} RoadmapX
-          </div>
+          {/* Right Side */}
 
-        </div>
+          <div className="flex items-center justify-center px-6 py-16 lg:px-12">
 
-        {/* Right Side */}
+            <div className="w-full max-w-md">
 
-        <div className="flex items-center justify-center px-6 py-16 lg:px-12">
+              <div className="mb-10">
 
-          <div className="w-full max-w-md">
+                <h2 className="text-4xl font-bold">
+                  Create Account
+                </h2>
 
-            <div className="mb-10">
-
-              <h2 className="text-4xl font-bold">
-                Create Account
-              </h2>
-
-              <p className="mt-3 text-gray-400">
-                Join RoadmapX and start creating
-                your personalized learning journey.
-              </p>
-
-            </div>
-
-            {error && (
-              <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                {error}
-              </div>
-            )}
-
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-5"
-            >
-
-              {/* Full Name */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  Full Name
-                </label>
-
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
-                />
+                <p className="mt-3 text-gray-400">
+                  Join RoadmapX and start creating
+                  your personalized learning journey.
+                </p>
 
               </div>
 
-              {/* Username */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  Username
-                </label>
-
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Choose a username"
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
-                />
-
-              </div>
-
-              {/* Email */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  Email Address
-                </label>
-
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter your email"
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
-                />
-
-              </div>
-                          {/* Password */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  Password
-                </label>
-
-                <div className="relative">
-
-                  <input
-                    type={
-                      showPassword
-                        ? "text"
-                        : "password"
-                    }
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Create a password"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowPassword(
-                        !showPassword
-                      )
-                    }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
-                  >
-                    {showPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-
+              {error && (
+                <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                  {error}
                 </div>
+              )}
 
-              </div>
-
-              {/* Confirm Password */}
-
-              <div>
-
-                <label className="mb-2 block text-sm font-medium text-gray-300">
-                  Confirm Password
-                </label>
-
-                <div className="relative">
-
-                  <input
-                    type={
-                      showConfirmPassword
-                        ? "text"
-                        : "password"
-                    }
-                    name="confirmPassword"
-                    value={
-                      formData.confirmPassword
-                    }
-                    onChange={handleChange}
-                    placeholder="Confirm your password"
-                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setShowConfirmPassword(
-                        !showConfirmPassword
-                      )
-                    }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
-                  </button>
-
-                </div>
-
-              </div>
-
-              {/* Register Button */}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-white bg-white py-3 font-semibold text-black transition hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-5"
               >
-                {loading ? (
-                  <>
-                    <LoaderCircle
-                      size={20}
-                      className="animate-spin"
+
+                {/* Full Name */}
+
+                <div>
+
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Full Name
+                  </label>
+
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Enter your full name"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
+                  />
+
+                </div>
+
+                {/* Username */}
+
+                <div>
+
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Username
+                  </label>
+
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Choose a username"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
+                  />
+
+                </div>
+
+                {/* Email */}
+
+                <div>
+
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Email Address
+                  </label>
+
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Enter your email"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
+                  />
+
+                </div>
+                {/* Password */}
+
+                <div>
+
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Password
+                  </label>
+
+                  <div className="relative">
+
+                    <input
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Create a password"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
                     />
-                    Creating Account...
-                  </>
-                ) : (
-                  <>
-                    Create Account
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </button>
 
-            </form>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          !showPassword
+                        )
+                      }
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
+                    >
+                      {showPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
+                    </button>
 
-            {/* Login */}
+                  </div>
 
-            <p className="mt-8 text-center text-gray-400">
+                </div>
 
-              Already have an account?{" "}
+                {/* Confirm Password */}
 
-              <Link
-                to="/login"
-                className="font-semibold text-white hover:underline"
-              >
-                Login
-              </Link>
+                <div>
 
-            </p>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    Confirm Password
+                  </label>
 
-            {/* Terms */}
+                  <div className="relative">
 
-            <p className="mt-6 text-center text-xs leading-6 text-gray-500">
+                    <input
+                      type={
+                        showConfirmPassword
+                          ? "text"
+                          : "password"
+                      }
+                      name="confirmPassword"
+                      value={
+                        formData.confirmPassword
+                      }
+                      onChange={handleChange}
+                      placeholder="Confirm your password"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white placeholder:text-gray-500 outline-none transition focus:border-white"
+                    />
 
-              By creating an account, you agree to our{" "}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(
+                          !showConfirmPassword
+                        )
+                      }
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-white"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={20} />
+                      ) : (
+                        <Eye size={20} />
+                      )}
+                    </button>
 
-              <Link
-                to="/terms"
-                className="hover:text-white"
-              >
-                Terms
-              </Link>{" "}
+                  </div>
 
-              and{" "}
+                </div>
 
-              <Link
-                to="/privacy"
-                className="hover:text-white"
-              >
-                Privacy Policy
-              </Link>
+                {/* Register Button */}
 
-              .
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-white bg-white py-3 font-semibold text-black transition hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {loading ? (
+                    <>
+                      <LoaderCircle
+                        size={20}
+                        className="animate-spin"
+                      />
+                      Creating Account...
+                    </>
+                  ) : (
+                    <>
+                      Create Account
+                      <ArrowRight size={18} />
+                    </>
+                  )}
+                </button>
 
-            </p>
+              </form>
+
+              {/* Login */}
+
+              <p className="mt-8 text-center text-gray-400">
+
+                Already have an account?{" "}
+
+                <Link
+                  to="/login"
+                  className="font-semibold text-white hover:underline"
+                >
+                  Login
+                </Link>
+
+              </p>
+
+              {/* Terms */}
+
+              <p className="mt-6 text-center text-xs leading-6 text-gray-500">
+
+                By creating an account, you agree to our{" "}
+
+                <Link
+                  to="/terms"
+                  className="hover:text-white"
+                >
+                  Terms
+                </Link>{" "}
+
+                and{" "}
+
+                <Link
+                  to="/privacy"
+                  className="hover:text-white"
+                >
+                  Privacy Policy
+                </Link>
+
+                .
+
+              </p>
+
+            </div>
 
           </div>
 
         </div>
 
       </div>
+    </>
 
-    </div>
+
   );
 };
 

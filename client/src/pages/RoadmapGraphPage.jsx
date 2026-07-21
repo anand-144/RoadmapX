@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import RoadmapGraph from "../components/roadmap/RoadmapGraph";
+import { Helmet } from "react-helmet-async";
 
 const RoadmapGraphPage = () => {
   const { slug } = useParams();
@@ -27,8 +28,8 @@ const RoadmapGraphPage = () => {
         {
           headers: token
             ? {
-                Authorization: `Bearer ${token}`,
-              }
+              Authorization: `Bearer ${token}`,
+            }
             : {},
         }
       );
@@ -75,118 +76,136 @@ const RoadmapGraphPage = () => {
     ) || 0;
 
   return (
-    <div className="min-h-screen bg-black pt-28 text-white">
 
-      <div className="mx-auto max-w-7xl px-6">
+    <>
+      <Helmet>
+        <title>Interactive Roadmap Graph | RoadmapX</title>
 
-        {/* Back */}
+        <meta
+          name="description"
+          content="Explore interactive roadmap graphs to visualize learning paths, topics, and resources."
+        />
 
-        <Link
-          to={`/roadmap/${roadmap.slug}`}
-          className="mb-8 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#111] px-5 py-3 transition hover:border-yellow-400"
-        >
-          <ArrowLeft size={18} />
+        <meta
+          name="keywords"
+          content="roadmap graph, interactive roadmap, learning graph, RoadmapX"
+        />
+      </Helmet>
 
-          Back to Roadmap
-        </Link>
+      <div className="min-h-screen bg-black pt-28 text-white">
 
-        {/* Header */}
+        <div className="mx-auto max-w-7xl px-6">
 
-        <div className="mb-10 rounded-3xl border border-white/10 bg-[#111] p-8">
+          {/* Back */}
 
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <Link
+            to={`/roadmap/${roadmap.slug}`}
+            className="mb-8 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#111] px-5 py-3 transition hover:border-yellow-400"
+          >
+            <ArrowLeft size={18} />
 
-            <div>
+            Back to Roadmap
+          </Link>
 
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-yellow-500/10 px-4 py-2 text-sm font-medium text-yellow-400">
+          {/* Header */}
 
-                <GitBranch size={16} />
+          <div className="mb-10 rounded-3xl border border-white/10 bg-[#111] p-8">
 
-                Interactive Learning Graph
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
-              </div>
+              <div>
 
-              <h1 className="text-4xl font-bold">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-yellow-500/10 px-4 py-2 text-sm font-medium text-yellow-400">
 
-                {roadmap.title}
+                  <GitBranch size={16} />
 
-              </h1>
+                  Interactive Learning Graph
 
-              <p className="mt-4 max-w-3xl leading-8 text-gray-400">
+                </div>
 
-                Explore every topic visually.
-                Click any node to reveal learning
-                resources and navigate through the
-                roadmap interactively.
+                <h1 className="text-4xl font-bold">
 
-              </p>
+                  {roadmap.title}
 
-            </div>
+                </h1>
 
-            {/* Stats */}
+                <p className="mt-4 max-w-3xl leading-8 text-gray-400">
 
-            <div className="grid grid-cols-3 gap-4">
-
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-center">
-
-                <BookOpen
-                  className="mx-auto text-yellow-400"
-                  size={22}
-                />
-
-                <h3 className="mt-3 text-2xl font-bold">
-
-                  {roadmap.topics?.length || 0}
-
-                </h3>
-
-                <p className="text-sm text-gray-500">
-
-                  Topics
+                  Explore every topic visually.
+                  Click any node to reveal learning
+                  resources and navigate through the
+                  roadmap interactively.
 
                 </p>
 
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-center">
+              {/* Stats */}
 
-                <GitBranch
-                  className="mx-auto text-yellow-400"
-                  size={22}
-                />
+              <div className="grid grid-cols-3 gap-4">
 
-                <h3 className="mt-3 text-2xl font-bold">
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-center">
 
-                  {totalResources}
+                  <BookOpen
+                    className="mx-auto text-yellow-400"
+                    size={22}
+                  />
 
-                </h3>
+                  <h3 className="mt-3 text-2xl font-bold">
 
-                <p className="text-sm text-gray-500">
+                    {roadmap.topics?.length || 0}
 
-                  Resources
+                  </h3>
 
-                </p>
+                  <p className="text-sm text-gray-500">
 
-              </div>
+                    Topics
 
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-center">
+                  </p>
 
-                <Clock3
-                  className="mx-auto text-yellow-400"
-                  size={22}
-                />
+                </div>
 
-                <h3 className="mt-3 text-xl font-bold">
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-center">
 
-                  {roadmap.estimatedTime}
+                  <GitBranch
+                    className="mx-auto text-yellow-400"
+                    size={22}
+                  />
 
-                </h3>
+                  <h3 className="mt-3 text-2xl font-bold">
 
-                <p className="text-sm text-gray-500">
+                    {totalResources}
 
-                  Duration
+                  </h3>
 
-                </p>
+                  <p className="text-sm text-gray-500">
+
+                    Resources
+
+                  </p>
+
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-center">
+
+                  <Clock3
+                    className="mx-auto text-yellow-400"
+                    size={22}
+                  />
+
+                  <h3 className="mt-3 text-xl font-bold">
+
+                    {roadmap.estimatedTime}
+
+                  </h3>
+
+                  <p className="text-sm text-gray-500">
+
+                    Duration
+
+                  </p>
+
+                </div>
 
               </div>
 
@@ -194,15 +213,15 @@ const RoadmapGraphPage = () => {
 
           </div>
 
+          {/* Graph */}
+
+          <RoadmapGraph roadmap={roadmap} />
+
         </div>
 
-        {/* Graph */}
-
-        <RoadmapGraph roadmap={roadmap} />
-
       </div>
+    </>
 
-    </div>
   );
 };
 

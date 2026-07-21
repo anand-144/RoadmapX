@@ -11,15 +11,16 @@ import RoadmapManagement from "../components/admin/roadmaps/RoadmapManagement";
 import UserManagement from "../components/admin/users/UserManagement";
 import Analytics from "../components/admin/analytics/Analytics";
 import { useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const Admin = () => {
-const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-const activeTab = searchParams.get("tab") || "overview";
+  const activeTab = searchParams.get("tab") || "overview";
 
-const setActiveTab = (tab) => {
-  setSearchParams({ tab });
-};
+  const setActiveTab = (tab) => {
+    setSearchParams({ tab });
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -33,41 +34,56 @@ const setActiveTab = (tab) => {
         return <RoadmapManagement />;
 
       case "users":
-      return <UserManagement />;
+        return <UserManagement />;
 
       case "analytics":
         return <Analytics />;
 
       default:
-        return <Overview   />;
+        return <Overview />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-black pt-24 text-white">
 
-      <div className="mx-auto max-w-[1800px] px-6">
+    <>
+      <Helmet>
+        <title>Admin Dashboard | RoadmapX</title>
 
-        <AdminHeader />
+        <meta
+          name="description"
+          content="Manage users, roadmaps, categories, and platform content from the RoadmapX admin dashboard."
+        />
 
-        <div className="mt-8 grid gap-8 xl:grid-cols-12">
+        <meta name="robots" content="noindex,nofollow" />
+      </Helmet>
 
-          <div className="xl:col-span-3">
-            <AdminSidebar
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          </div>
+      <div className="min-h-screen bg-black pt-24 text-white">
 
-          <div className="xl:col-span-9">
-            {renderContent()}
+        <div className="mx-auto max-w-[1800px] px-6">
+
+          <AdminHeader />
+
+          <div className="mt-8 grid gap-8 xl:grid-cols-12">
+
+            <div className="xl:col-span-3">
+              <AdminSidebar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+            </div>
+
+            <div className="xl:col-span-9">
+              {renderContent()}
+            </div>
+
           </div>
 
         </div>
 
-      </div>  
+      </div>
+    </>
 
-    </div>
   );
 };
 
