@@ -138,7 +138,7 @@ const TopRoadmaps = ({ data = [] }) => {
 
                     <Heart size={16} />
 
-                    {roadmap.likesCount || 0}
+                    {roadmap.likes?.length || 0}
 
                   </div>
 
@@ -146,7 +146,7 @@ const TopRoadmaps = ({ data = [] }) => {
 
                     <Bookmark size={16} />
 
-                    {roadmap.bookmarksCount || 0}
+                    {roadmap.saves?.length || 0}
 
                   </div>
 

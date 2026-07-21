@@ -168,7 +168,6 @@ const Builder = () => {
         `${import.meta.env.VITE_API_URL}/categories`
       );
       setCategories(res.data.categories)
-      console.log(res.data.categories)
     } catch (error) {
       console.log(error);
     }

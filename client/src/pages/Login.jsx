@@ -54,9 +54,6 @@ const Login = () => {
 
       const data = await loginAPI(formData);
 
-      console.log("Login Response:", data);
-      console.log("Context Login Called");
-
       login(data.user, data.token);
 
       toast.success(`Welcome back, ${data.user.name}! 🎉`);

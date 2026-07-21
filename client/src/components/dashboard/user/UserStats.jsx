@@ -54,8 +54,6 @@ const UserStats = () => {
       { headers }
     );
 
-    console.log("Profile Response:", profileRes.data);
-
     const userId = profileRes.data.user._id;
 
     const [

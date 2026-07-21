@@ -12,6 +12,9 @@ const MyBookmarks = () => {
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const [selectedRoadmap, setSelectedRoadmap] = useState(null);
 
   const fetchBookmarks = async () => {
     try {
@@ -39,25 +42,27 @@ const MyBookmarks = () => {
       setLoading(false);
     }
   };
-  
-const removeBookmark = async (roadmapId) => {
-  const confirmed = window.confirm(
-    "Remove this roadmap from your bookmarks?"
-  );
 
-  if (!confirmed) return;
+const openDeleteModal = (roadmapId) => {
+  setSelectedRoadmap(roadmapId);
+  setShowDeleteModal(true);
+};
 
+const removeBookmark = async () => {
   try {
     const token = localStorage.getItem("token");
 
     await axios.delete(
-      `${import.meta.env.VITE_API_URL}/bookmarks/${roadmapId}`,
+      `${import.meta.env.VITE_API_URL}/bookmarks/${selectedRoadmap}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }
     );
+
+    setShowDeleteModal(false);
+    setSelectedRoadmap(null);
 
     fetchBookmarks();
   } catch (error) {
@@ -69,7 +74,7 @@ const removeBookmark = async (roadmapId) => {
     fetchBookmarks();
   }, []);
 
-  
+
 
   return (
     <section className="rounded-3xl border border-slate-800 bg-slate-950 p-6 shadow-xl">
@@ -146,7 +151,7 @@ const removeBookmark = async (roadmapId) => {
       ) : (
         <div className="space-y-5">
           {bookmarks.slice(0, 4).map((bookmark) => (
-                        <div
+            <div
               key={bookmark._id}
               className="group overflow-hidden rounded-2xl border border-slate-800 bg-black/40 transition-all duration-300 hover:border-slate-700 hover:bg-slate-900/60"
             >
@@ -205,7 +210,7 @@ const removeBookmark = async (roadmapId) => {
                   </Link>
 
                   <button
-                    onClick={() => removeBookmark(bookmark.roadmap._id)}
+                    onClick={() => openDeleteModal(bookmark.roadmap._id)}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-900 bg-red-950/20 px-5 py-3 text-sm font-medium text-red-400 transition hover:bg-red-900/30"
                   >
                     Remove
@@ -215,7 +220,67 @@ const removeBookmark = async (roadmapId) => {
             </div>
           ))}
         </div>
+
+
       )}
+
+
+      {showDeleteModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+
+    <div className="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950 p-8 shadow-2xl">
+
+      <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
+
+        <Bookmark
+          size={32}
+          className="text-red-400"
+        />
+
+      </div>
+
+      <h2 className="text-center text-2xl font-bold text-white">
+
+        Remove Bookmark?
+
+      </h2>
+
+      <p className="mt-4 text-center leading-7 text-slate-400">
+
+        This roadmap will be removed from your saved bookmarks.
+        You can always bookmark it again later.
+
+      </p>
+
+      <div className="mt-8 flex gap-4">
+
+        <button
+          onClick={() => {
+            setShowDeleteModal(false);
+            setSelectedRoadmap(null);
+          }}
+          className="flex-1 rounded-xl border border-slate-700 py-3 font-semibold text-white transition hover:bg-slate-900"
+        >
+
+          Cancel
+
+        </button>
+
+        <button
+          onClick={removeBookmark}
+          className="flex-1 rounded-xl bg-red-500 py-3 font-semibold text-white transition hover:bg-red-600"
+        >
+
+          Remove
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </section>
   );
 };

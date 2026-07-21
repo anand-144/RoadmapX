@@ -201,7 +201,7 @@ const MyRoadmaps = () => {
                 {/* Actions */}
                 <div className="flex gap-3 lg:flex-col">
                   <Link
-                    to={`/roadmaps/${roadmap.slug}`}
+                    to={`/roadmap/${roadmap.slug}`}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-900"
                   >
                     View

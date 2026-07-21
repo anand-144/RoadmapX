@@ -253,8 +253,7 @@ export const getAllRoadmaps = async (req, res) => {
         limit,
         totalRoadmaps,
         totalPages: Math.ceil(totalRoadmaps / limit),
-        hasNextPage:
-          page < Math.ceil(totalRoadmaps / limit),
+        hasNextPage: page < Math.ceil(totalRoadmaps / limit),
         hasPrevPage: page > 1,
       },
     });
@@ -422,11 +421,7 @@ export const getPlatformAnalytics = async (req, res) => {
     // Basic Stats
     // ==========================
 
-    const [
-      totalUsers,
-      totalRoadmaps,
-      totalCategories,
-    ] = await Promise.all([
+    const [totalUsers, totalRoadmaps, totalCategories] = await Promise.all([
       User.countDocuments(),
       Roadmap.countDocuments(),
       Category.countDocuments(),
@@ -436,111 +431,102 @@ export const getPlatformAnalytics = async (req, res) => {
     // Views
     // ==========================
 
-    const totalViewsResult =
-      await Roadmap.aggregate([
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: "$views",
-            },
+    const totalViewsResult = await Roadmap.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: "$views",
           },
         },
-      ]);
+      },
+    ]);
 
-    const totalViews =
-      totalViewsResult[0]?.total || 0;
+    const totalViews = totalViewsResult[0]?.total || 0;
 
     // ==========================
     // Likes
     // ==========================
 
-    const totalLikesResult =
-      await Roadmap.aggregate([
-        {
-          $project: {
-            likes: {
-              $size: "$likes",
-            },
+    const totalLikesResult = await Roadmap.aggregate([
+      {
+        $project: {
+          likes: {
+            $size: "$likes",
           },
         },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: "$likes",
-            },
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: "$likes",
           },
         },
-      ]);
+      },
+    ]);
 
-    const totalLikes =
-      totalLikesResult[0]?.total || 0;
+    const totalLikes = totalLikesResult[0]?.total || 0;
 
     // ==========================
     // Saves
     // ==========================
 
-    const totalBookmarksResult =
-      await Roadmap.aggregate([
-        {
-          $project: {
-            saves: {
-              $size: "$saves",
-            },
+    const totalBookmarksResult = await Roadmap.aggregate([
+      {
+        $project: {
+          saves: {
+            $size: "$saves",
           },
         },
-        {
-          $group: {
-            _id: null,
-            total: {
-              $sum: "$saves",
-            },
+      },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: "$saves",
           },
         },
-      ]);
+      },
+    ]);
 
-    const totalBookmarks =
-      totalBookmarksResult[0]?.total || 0;
+    const totalBookmarks = totalBookmarksResult[0]?.total || 0;
 
     // ==========================
     // Published / Draft
     // ==========================
 
-    const publishedRoadmaps =
-      await Roadmap.countDocuments({
-        status: "Published",
-      });
+    const publishedRoadmaps = await Roadmap.countDocuments({
+      status: "Published",
+    });
 
-    const draftRoadmaps =
-      await Roadmap.countDocuments({
-        status: "Draft",
-      });
+    const draftRoadmaps = await Roadmap.countDocuments({
+      status: "Draft",
+    });
 
     // ==========================
     // Monthly Users
     // ==========================
 
-    const monthlyUsers =
-      await User.aggregate([
-        {
-          $group: {
-            _id: {
-              month: {
-                $month: "$createdAt",
-              },
-            },
-            users: {
-              $sum: 1,
+    const monthlyUsers = await User.aggregate([
+      {
+        $group: {
+          _id: {
+            month: {
+              $month: "$createdAt",
             },
           },
-        },
-        {
-          $sort: {
-            "_id.month": 1,
+          users: {
+            $sum: 1,
           },
         },
-      ]);
+      },
+      {
+        $sort: {
+          "_id.month": 1,
+        },
+      },
+    ]);
 
     const monthNames = [
       "",
@@ -558,69 +544,67 @@ export const getPlatformAnalytics = async (req, res) => {
       "Dec",
     ];
 
-    const monthlyUsersData =
-      monthlyUsers.map((item) => ({
-        month:
-          monthNames[item._id.month],
-        users: item.users,
-      }));
+    const monthlyUsersData = monthlyUsers.map((item) => ({
+      month: monthNames[item._id.month],
+      users: item.users,
+    }));
 
     // ==========================
     // Category Distribution
     // ==========================
 
-    const categoryDistribution =
-      await Roadmap.aggregate([
-        {
-          $lookup: {
-            from: "categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "category",
+    const categoryDistribution = await Roadmap.aggregate([
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
+        },
+      },
+      {
+        $unwind: "$category",
+      },
+      {
+        $group: {
+          _id: "$category.name",
+          count: {
+            $sum: 1,
           },
         },
-        {
-          $unwind: "$category",
+      },
+      {
+        $project: {
+          _id: 0,
+          name: "$_id",
+          count: 1,
         },
-        {
-          $group: {
-            _id: "$category.name",
-            count: {
-              $sum: 1,
-            },
-          },
+      },
+      {
+        $sort: {
+          count: -1,
         },
-        {
-          $project: {
-            _id: 0,
-            name: "$_id",
-            count: 1,
-          },
-        },
-        {
-          $sort: {
-            count: -1,
-          },
-        },
-      ]);
+      },
+    ]);
 
     // ==========================
     // Top Roadmaps
     // ==========================
 
-    const topRoadmaps =
-      await Roadmap.find()
-        .populate(
-          "category",
-          "name"
-        )
-        .sort({
-          views: -1,
-        })
-        .limit(5)
-        .select(
-          "title views category"
-        );
+    const topRoadmaps = await Roadmap.find()
+      .populate("category", "name")
+      .sort({
+        views: -1,
+      })
+      .limit(5)
+      .select("title views category likes saves")
+      .lean();
+
+    const formattedTopRoadmaps = topRoadmaps.map((roadmap) => ({
+      ...roadmap,
+      likesCount: roadmap.likes?.length || 0,
+      bookmarksCount: roadmap.saves?.length || 0,
+    }));
 
     // ==========================
     // Response
@@ -641,12 +625,11 @@ export const getPlatformAnalytics = async (req, res) => {
         publishedRoadmaps,
         draftRoadmaps,
 
-        monthlyUsers:
-          monthlyUsersData,
+        monthlyUsers: monthlyUsersData,
 
         categoryDistribution,
 
-        topRoadmaps,
+        topRoadmaps: formattedTopRoadmaps,
       },
     });
   } catch (error) {
