@@ -3,6 +3,10 @@
 # 🚀 RoadmapX
 ### *Build • Learn • Share • Grow*
 
+<p align="center">
+  <img src="./assets/screenshots/home.png" alt="RoadmapX Home Page" width="100%">
+</p>
+
 <img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=600&size=28&duration=3500&pause=1000&color=FACC15&center=true&vCenter=true&width=600&lines=The+Ultimate+Learning+Roadmap+Platform;Create+Interactive+Roadmaps;Discover+Community+Learning+Paths;Built+with+the+MERN+Stack" />
 
 <p align="center">
