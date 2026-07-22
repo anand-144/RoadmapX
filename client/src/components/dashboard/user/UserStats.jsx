@@ -119,19 +119,6 @@ const UserStats = () => {
         change: "Followers",
       },
     ]);
-
-    console.log("========== DASHBOARD DATA ==========");
-
-    console.log({
-      profile: profileRes.data,
-      roadmaps: roadmapRes.data,
-      progress: progressRes.data,
-      bookmarks: bookmarkRes.data,
-      notifications: notificationRes.data,
-      followers: followerRes.data,
-    });
-
-    console.log("====================================");
   } catch (error) {
     console.error("Dashboard Debug:", error);
   }

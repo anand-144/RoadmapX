@@ -32,8 +32,6 @@ const MyRoadmaps = () => {
         }
       );
 
-      console.log(data.roadmaps);
-
       if (data.success) {
         setRoadmaps(data.roadmaps || []);
       }

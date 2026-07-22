@@ -78,7 +78,6 @@ const Card = ({
 );
 
 const RoadmapContent = ({ roadmap }) => {
-  console.log("Roadmap Data:", roadmap);
 
   return (
     <div className="grid gap-10 xl:grid-cols-[2fr_1fr]">
