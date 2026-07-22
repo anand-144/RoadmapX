@@ -7,13 +7,8 @@
 
 ## 🏠 Home Page
 
-<p align="center">
-  <img src="https://i.ibb.co/jPJBQvg4/Screenshot-2026-07-22-131803.png" alt="RoadmapX Home Page" width="100%">
-</p>
 
-<p align="center">
-  <em>Discover, build, and share interactive learning roadmaps with a modern developer-focused interface.</em>
-</p>
+<img src="https://i.ibb.co/jPJBQvg4/Screenshot-2026-07-22-131803.png" alt="RoadmapX Preview" width="100%"/>
 
 <img src="https://readme-typing-svg.demolab.com?font=Poppins&weight=600&size=28&duration=3500&pause=1000&color=FACC15&center=true&vCenter=true&width=600&lines=The+Ultimate+Learning+Roadmap+Platform;Create+Interactive+Roadmaps;Discover+Community+Learning+Paths;Built+with+the+MERN+Stack" />
 
