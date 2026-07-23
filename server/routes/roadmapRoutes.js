@@ -40,7 +40,7 @@ router.post("/", protect, createRoadmap);
 // Update roadmap
 router.put("/:id", protect, updateRoadmap);
 
-router.patch(
+router.put(
   "/:id/feature",
   protect,
   adminOnly,
