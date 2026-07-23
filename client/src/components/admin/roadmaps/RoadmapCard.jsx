@@ -55,7 +55,7 @@ const RoadmapCard = ({
     try {
       setLoading(true);
 
-      const { data } = await axios.put(
+      const { data } = await axios.patch(
         `${import.meta.env.VITE_API_URL}/admin/roadmaps/${roadmap._id}/feature`,
         {},
         {
